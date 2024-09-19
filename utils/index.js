@@ -1,17 +1,19 @@
 const logger = require('./logger');
 const sendMail = require('./sendMail');
 const hashPassword = require('./hashPassword');
-const token = require('./token');
-const { formatResponse, getUserIdCurrent } = require('./helpers');
-const { checkUserMatch, checkValidUrl } = require('./validation');
+const { createToken, createTokenVerifiedUser } = require('./token');
+const { formatResponse, getUserIdCurrent, isEmptyObject } = require('./helpers');
+const { checkUserMatch, checkValidUrl, } = require('./validation');
 
 module.exports = {
     logger,
     sendMail,
     hashPassword,
-    token,
+    createToken,
     checkUserMatch,
     checkValidUrl,
     formatResponse,
-    getUserIdCurrent
+    getUserIdCurrent,
+    isEmptyObject,
+    createTokenVerifiedUser
 }

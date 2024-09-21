@@ -1,6 +1,7 @@
 const { API_PATH, HttpStatus } = require('../consts')
 const User = require("../models/User")
-const { userService } = require('../services')
+const { userService } = require('../services');
+const { getUserById } = require('../services/userService');
 const { formatResponse } = require("../utils");
 
 const userController = {
@@ -25,7 +26,16 @@ const userController = {
         } catch (error) {
             next(error);
         }
+    },
+    getUserById: async (req, res, next) => {
+        try {
+            const user = await userService.getUserById(req.params.id, true, req.user);
+            res.status(HttpStatus.Success).json(formatResponse(user));
+        } catch (error) {
+            next(error)
+        }
     }
+
 }
 
 module.exports = userController;

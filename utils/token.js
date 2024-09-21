@@ -8,9 +8,9 @@ const createToken = (user) => {
     if (!secret) {
         throw new Error('JWT_TOKEN_SECRET is not defined');
     }
-
+    const token = jwt.sign(dataInToken, secret, { expiresIn });
     return {
-        token: jwt.sign(dataInToken, secret, { expiresIn }),
+        token
     };
 };
 

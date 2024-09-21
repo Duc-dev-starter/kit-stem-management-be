@@ -1,6 +1,6 @@
 
-import { HttpStatus } from "../const";
-import { logger } from "../utils";
+const { HttpStatus } = require("../consts");
+const { logger } = require("../utils");
 
 const errorMiddleware = (error, req, res, next) => {
     const status = error.status || HttpStatus.InternalServerError;
@@ -15,4 +15,4 @@ const errorMiddleware = (error, req, res, next) => {
     });
 };
 
-export default errorMiddleware;
+module.exports = errorMiddleware;

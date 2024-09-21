@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { USER_ROLE } = require('../consts');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -24,6 +25,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: Object.values(USER_ROLE),
         required: true
     },
     status: {
@@ -39,9 +41,6 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String
     },
-    video: {
-        type: String
-    },
     dob: {
         type: Date,
         default: Date.now
@@ -55,7 +54,8 @@ const userSchema = new mongoose.Schema({
     is_deleted: {
         type: Boolean,
         default: false
-    }
+    },
+    token_version: { type: Number },
 }, { timestamps: true })
 
 const User = mongoose.model('User', userSchema);

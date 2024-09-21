@@ -1,16 +1,14 @@
 const { OAuth2Client } = require("google-auth-library");
-const { USER_ROLE } = require("../consts");
+const { USER_ROLE, HttpStatus } = require("../consts");
 const HttpException = require("../exception");
-const { isEmptyObject, hashPassword, sendMail } = require("../utils");
-const { userRepository } = require('../repository')
+const { isEmptyObject, sendMail, encodePasswordUserNormal } = require("../utils");
+const { userRepository } = require('../repository');
+const mongoose = require("mongoose");
 const userService = {
     createUser: async (model, isGoogle = false, isRegister = true) => {
         if (isEmptyObject(model)) {
             throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
         }
-
-        console.log(model)
-        console.log(model.role)
 
         let newUser = {
             ...model,
@@ -18,9 +16,10 @@ const userService = {
             description: model.description || '',
             phone_number: model.phone_number || '',
             avatar: model.avatar || '',
+            token_version: 0,
         };
 
-        if (isRegister && newUser.role === USER_ROLE.MANAGER) {
+        if (isRegister && newUser.role !== USER_ROLE.MEMBER) {
             throw new HttpException(
                 HttpStatus.BadRequest,
                 `You can only register with the Member role!`,
@@ -38,7 +37,6 @@ const userService = {
                 );
             }
         }
-
         // check email duplicates
         const existingUserByEmail = await userRepository.findByEmail(newUser.email);
         if (existingUserByEmail) {
@@ -47,9 +45,8 @@ const userService = {
 
         // create a new user normal
         if (!isGoogle && model.password) {
-            console.log('ok')
             // handle encode password
-            newUser.password = await hashPassword(model.password);
+            newUser.password = await encodePasswordUserNormal(model.password);
         }
         let subject = 'You create new account to our system';
         let content = `Hello, ${newUser.name}. Welcome to our system`;
@@ -85,7 +82,22 @@ const userService = {
             newUser.google_id = payload.sub;
         }
         return newUser;
+    },
+    getUserById: async (userId, is_deletedPassword, userData) => {
+        if (!mongoose.isValidObjectId(userId)) {
+            throw new HttpException(HttpStatus.BadRequest, `Invalid User ID format.`);
+        }
+        const user = await userRepository.findById(userId);
+        if (!user) {
+            throw new HttpException(HttpStatus.BadRequest, `User is not exists`)
+        }
+
+        if (is_deletedPassword) {
+            delete user.password;
+        }
+        return user
     }
+
 }
 
 module.exports = userService;

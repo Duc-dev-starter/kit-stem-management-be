@@ -9,6 +9,9 @@ const userRepository = {
     },
     createNewUser: async (user) => {
         return await User.create(user);
+    },
+    findById: async (userId) => {
+        return await User.findOne({ _id: userId, is_deleted: false }).lean()
     }
 
 };

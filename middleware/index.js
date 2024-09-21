@@ -1,5 +1,10 @@
-import authMiddleWare from "./auth";
-import errorMiddleware from "./error";
-import validationMiddleware from "./validation";
+const authMiddleWare = require("./auth");
+const errorMiddleware = require('./error');
+const validationMiddleware = require("./validation");
 
-export { authMiddleWare, errorMiddleware, validationMiddleware };
+module.exports = {
+    authMiddleWare,
+    errorMiddleware,
+    validationMiddleware
+}
+

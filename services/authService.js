@@ -1,8 +1,8 @@
 const { HttpStatus } = require("../consts");
-const { default: HttpException } = require("../exception");
-const { createToken } = require("../utils");
+const HttpException = require("../exception");
+const { createToken, sendMail, generateRandomPassword, encodePasswordUserNormal } = require("../utils");
 const { OAuth2Client } = require('google-auth-library');
-const { userRepository } = require('../repository');
+const { authRepository } = require('../repository');
 const bcryptjs = require('bcrypt');
 
 
@@ -32,7 +32,7 @@ const authService = {
         }
 
         // Login bằng email và password
-        const user = await userRepository.findByEmail(email);
+        const user = await authRepository.findUserByEmail(email);
 
         if (!user) {
             throw new HttpException(HttpStatus.BadRequest, `Your email: ${email} does not exist.`);
@@ -44,7 +44,7 @@ const authService = {
 
         // Normal login
         if (!isGoogle && model.password) {
-            const isMatchPassword = await bcryptjs.compare(model.password, user.password);
+            const isMatchPassword = bcryptjs.compare(model.password, user.password);
             if (!isMatchPassword) {
                 throw new HttpException(HttpStatus.BadRequest, 'Your password is not valid!');
             }
@@ -64,8 +64,63 @@ const authService = {
             );
         }
 
+        if (!user.token_version) {
+            user.token_version = 0;
+        }
+
         return createToken(user);
     },
+    getCurrentLoginUser: async (userId) => {
+        const user = await authRepository.findUserById(userId);
+        if (!user) {
+            throw new HttpException(HttpStatus.BadRequest, 'User does not exist.');
+        }
+        delete user.password;
+        console.log(`from get current user: ${user}`);
+        return user;
+    },
+
+    forgotPassword: async (email) => {
+        const user = await authRepository.findUserByEmail(email);
+        if (!user) {
+            throw new HttpException(HttpStatus.BadRequest, `User with mail: ${email} is not exists.`)
+        }
+        if (user.google_id) {
+            throw new HttpException(
+                HttpStatus.BadRequest,
+                `Your account is logged in by google. Please contact google for reset password!`,
+            );
+        }
+        // handle encode password
+        const generatePassword = generateRandomPassword(10);
+
+        // send mail with new password
+        const sendMailResult = await sendMail({
+            toMail: user.email,
+            subject: 'Generate new password for user',
+            html: `Hello, ${user.name}.<br>This is a new password for ${user.email} is:<br><strong>${generatePassword}</strong>`,
+        });
+        if (!sendMailResult) {
+            throw new HttpException(HttpStatus.BadRequest, `Cannot send mail for ${user.email}`);
+        }
+
+        const newPassword = await encodePasswordUserNormal(generatePassword);
+        user.password = newPassword;
+        user.updatedAt = new Date();
+        const updateUser = await user.save();
+        if (!updateUser) {
+            throw new HttpException(HttpStatus.BadRequest, 'Cannot update user!');
+        }
+
+        return true;
+    },
+    logout: async (userId) => {
+        const user = authRepository.findByIdAndUpdate(userId);
+        if (!user) {
+            throw new HttpException(HttpStatus.BadRequest, `Cannot update user!`)
+        }
+        return true;
+    }
 };
 
 module.exports = authService;

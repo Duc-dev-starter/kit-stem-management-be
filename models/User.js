@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { USER_ROLE } = require('../consts');
+const { UserRole, UserRoleEnum } = require('../consts');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -21,11 +21,13 @@ const userSchema = new mongoose.Schema({
                 return !this.google_id;
             },
             'Please enter your password'
-        ]
+        ],
+        minLength: 6
     },
     role: {
         type: String,
-        enum: Object.values(USER_ROLE),
+        enum: Object.values(UserRole),
+        default: UserRoleEnum.CUSTOMER,
         required: true
     },
     status: {

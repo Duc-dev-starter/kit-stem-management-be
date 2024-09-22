@@ -4,6 +4,7 @@ const { encodePasswordUserNormal, generateRandomPassword } = require('./hashPass
 const { createToken, createTokenVerifiedUser } = require('./token');
 const { formatResponse, getUserIdCurrent, isEmptyObject } = require('./helpers');
 const { checkUserMatch, checkValidUrl, } = require('./validation');
+const formatPagination = require('./formatPagination.js')
 
 module.exports = {
     logger,
@@ -16,5 +17,6 @@ module.exports = {
     isEmptyObject,
     createTokenVerifiedUser,
     encodePasswordUserNormal,
-    generateRandomPassword
+    generateRandomPassword,
+    formatPagination
 }

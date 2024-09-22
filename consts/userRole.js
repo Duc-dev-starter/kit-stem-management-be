@@ -1,9 +1,14 @@
-const USER_ROLE = {
+const UserRoleEnum = {
     ALL: 'all',
     MANAGER: 'manager',
     STAFF: 'staff',
-    REFEREE: 'referee',
-    MEMBER: 'member'
+    CUSTOMER: 'customer',
+    ADMIN: 'admin'
 }
 
-module.exports = USER_ROLE;
+const UserRole = UserRoleEnum.ADMIN | UserRoleEnum.CUSTOMER | UserRoleEnum.MANAGER | UserRoleEnum.STAFF | UserRoleEnum.ALL;
+
+module.exports = {
+    UserRoleEnum,
+    UserRole
+};

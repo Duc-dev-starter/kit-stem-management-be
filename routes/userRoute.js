@@ -1,11 +1,56 @@
 const express = require('express');
 const { userController } = require('../controllers');
 const { authMiddleWare, validationMiddleware } = require('../middleware');
-const User = require('../models/User');
+
+const { User, ChangePasswordSchema, ChangeStatusSchema, ChangeRoleSchema, UpdateUserSchema, SearchUserSchema } = require('../models');
+const { UserRoleEnum } = require('../consts');
 
 const router = express.Router();
 
+// POST domain:/api/users/register -> Register normal user
 router.post('/register', validationMiddleware(User), userController.register);
+
+// POST domain:/api/users/google -> Register google user
+router.post('/google', userController.register);
+
+// POST domain:/api/users/create -> Create normal user by admin
+router.post('/create', authMiddleWare([UserRoleEnum.ADMIN]), validationMiddleware(User), userController.register)
+
+// POST domain:/api/users/search -> Get all users includes params: keyword, status, role
+router.post('/search',
+    authMiddleWare([UserRoleEnum.ADMIN]),
+    validationMiddleware(SearchUserSchema),
+    userController.getUsers,
+);
+
+// GET domain:/api/users/:id -> Get user by id
 router.get('/:id', authMiddleWare([], true), userController.getUserById);
+
+// PUT domain:/api/users/change-password -> Change password
+router.put('/change-password', authMiddleWare(), validationMiddleware(ChangePasswordSchema), userController.changePassword);
+
+// PUT domain:/api/users/change-status -> Change user status (block/unBlock)
+router.put('/change-status',
+    authMiddleWare([UserRoleEnum.ADMIN]),
+    validationMiddleware(ChangeStatusSchema),
+    userController.changeStatus,
+);
+
+// PUT domain:/api/users/change-role -> Change user role
+router.put("/change-role",
+    authMiddleWare([UserRoleEnum.ADMIN]),
+    validationMiddleware(ChangeRoleSchema),
+    userController.changeRole,
+);
+
+// PUT domain:/api/users/:id -> Update user
+router.put(`/:id`,
+    authMiddleWare(),
+    validationMiddleware(UpdateUserSchema),
+    userController.updateUser,
+);
+
+// POST domain:/api/users/:id -> Delete user logic
+router.delete(`/:id`, authMiddleWare([UserRoleEnum.ADMIN]), userController.deleteUser);
 
 module.exports = router;

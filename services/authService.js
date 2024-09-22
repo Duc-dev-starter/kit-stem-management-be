@@ -44,7 +44,7 @@ const authService = {
 
         // Normal login
         if (!isGoogle && model.password) {
-            const isMatchPassword = bcryptjs.compare(model.password, user.password);
+            const isMatchPassword = await bcryptjs.compare(model.password, user.password);
             if (!isMatchPassword) {
                 throw new HttpException(HttpStatus.BadRequest, 'Your password is not valid!');
             }

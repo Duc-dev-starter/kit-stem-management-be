@@ -2,9 +2,10 @@ const logger = require('./logger');
 const sendMail = require('./sendMail');
 const { encodePasswordUserNormal, generateRandomPassword } = require('./hashPassword');
 const { createToken, createTokenVerifiedUser } = require('./token');
-const { formatResponse, getUserIdCurrent, isEmptyObject } = require('./helpers');
+const { getUserIdCurrent, isEmptyObject } = require('./helpers');
 const { checkUserMatch, checkValidUrl, } = require('./validation');
-const formatPagination = require('./formatPagination.js')
+const { formatPaginationData, formatResponse } = require('./formatResponse.js');
+const itemsQuery = require('./query.js');
 
 module.exports = {
     logger,
@@ -18,5 +19,6 @@ module.exports = {
     createTokenVerifiedUser,
     encodePasswordUserNormal,
     generateRandomPassword,
-    formatPagination
+    formatPaginationData,
+    itemsQuery
 }

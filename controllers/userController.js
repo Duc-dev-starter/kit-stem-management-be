@@ -1,12 +1,11 @@
 const { API_PATH, HttpStatus } = require('../consts')
-const User = require("../models/User")
 const { userService } = require('../services');
 const { formatResponse } = require("../utils");
 
 const userController = {
     generateUser: async (req, res, next) => {
         try {
-            const model = new User('')
+            const model = new Regi
         } catch (error) {
 
         }

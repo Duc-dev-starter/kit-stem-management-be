@@ -35,7 +35,7 @@ const userRepository = {
         return await User.updateOne({ _id: userId }, { is_deleted: true, updatedAt: new Date() })
     },
     countUser: async (query) => {
-        return await User.countDocuments(query).exec();
+        return await User.find(query).countDocuments().exec();
     },
     findUsersWithPagination: async (query, pageNum, pageSize) => {
         return await User.find(query)

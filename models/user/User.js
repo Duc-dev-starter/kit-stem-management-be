@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
-const { UserRole, UserRoleEnum } = require('../consts');
+const { UserRole, UserRoleEnum } = require('../../consts');
 
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
     name: {
         type: String,
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema({
             },
             'Please enter your password'
         ],
-        minLength: 6
     },
     role: {
         type: String,
@@ -45,20 +45,20 @@ const userSchema = new mongoose.Schema({
     },
     dob: {
         type: Date,
-        default: Date.now
-    },
-    verification_token: {
-        type: String
-    },
-    verification_token_expires: {
-        type: Date
+        default: Date.now()
     },
     is_deleted: {
         type: Boolean,
         default: false
     },
     token_version: { type: Number },
-}, { timestamps: true })
+    created_at: {
+        type: Date, default: Date.now
+    },
+    updated_at: {
+        type: Date, default: Date.now
+    },
+})
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 module.exports = User;

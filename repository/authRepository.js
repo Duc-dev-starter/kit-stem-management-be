@@ -1,12 +1,15 @@
-const User = require("../models/User")
+const { User } = require("../models");
 
 const authRepository = {
     findUserById: async (userId) => {
-        return await User.findById(userId).lean()
+        return await User.findById(userId).lean();
     },
 
     findUserByEmail: async (email) => {
-        return await User.findOne({ email, is_deleted: false })
+        return await User.findOne({
+            email: { $regex: new RegExp('^' + email + '$', 'i') },
+            is_deleted: false
+        });
     },
 
     findByIdAndUpdate: async (userId) => {

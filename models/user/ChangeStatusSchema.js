@@ -11,5 +11,9 @@ const changeStatusSchema = new mongoose.Schema({
     }
 })
 
-const ChangeStatus = mongoose.model('ChangeStatus', changeStatusSchema);
-module.exports = ChangeStatus;
+const validateStatusUser = (data) => {
+    const instance = new mongoose.Document(data, changeStatusSchema);
+    return instance.validate();
+};
+
+module.exports = validateStatusUser;

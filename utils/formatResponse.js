@@ -10,4 +10,14 @@ const formatPaginationData = (data, pageNum, pageSize, totalItems) => {
     };
 };
 
-module.exports = formatPaginationData;
+const formatResponse = (data, success = true) => {
+    return {
+        success,
+        data,
+    };
+};
+
+module.exports = {
+    formatPaginationData,
+    formatResponse
+};

@@ -1,14 +1,10 @@
 const { HttpStatus } = require("../consts");
 const HttpException = require("../exception");
 
-const validationMiddleware = (Model) => {
+const validationMiddleware = (validateFn) => {
     return async (req, res, next) => {
         try {
-            // Tạo một instance từ model với dữ liệu từ body
-            const instance = new Model(req.body);
-
-            // Chạy validate bằng mongoose
-            await instance.validate();
+            await validateFn(req.body);
 
             next();
         } catch (validationError) {

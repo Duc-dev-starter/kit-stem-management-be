@@ -1,15 +1,26 @@
-const User = require('./User');
-const ChangePasswordSchema = require('./ChangePasswordSchema')
-const ChangeStatusSchema = require('./ChangeStatusSchema')
-const ChangeRoleSchema = require('./ChangeRoleSchema');
-const UpdateUserSchema = require('./UpdateUserSchema');
-const SearchUserSchema = require('./SearchUserSchema');
+//User Schema
+const { User, validateChangePassword, validateChangeRole, validateRegisterUser, validateSearchUser, validateStatusUser, validateUpdateUser } = require('./user');
+
+//Blog Schema
+const { Blog, validateCreateBlog, validateSearchBlog, validateUpdateBlog } = require('./blog');
+
+//Category Schema
+const { Category, validateSearchCategory, validateUpdateCategory, validateCreateCategory } = require('./category');
 
 module.exports = {
     User,
-    ChangePasswordSchema,
-    ChangeStatusSchema,
-    ChangeRoleSchema,
-    UpdateUserSchema,
-    SearchUserSchema
+    validateChangePassword,
+    validateChangeRole,
+    validateRegisterUser,
+    validateSearchUser,
+    validateStatusUser,
+    validateUpdateUser,
+    Blog,
+    validateCreateBlog,
+    validateSearchBlog,
+    validateUpdateBlog,
+    Category,
+    validateSearchCategory,
+    validateUpdateCategory,
+    validateCreateCategory
 }

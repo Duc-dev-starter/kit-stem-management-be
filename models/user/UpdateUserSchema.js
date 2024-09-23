@@ -19,5 +19,8 @@ const updateUserSchema = new mongoose.Schema({
     }
 })
 
-const UpdateUser = mongoose.model('UpdateUser', updateUserSchema);
-module.exports = UpdateUser;
+const validateUpdateUser = (data) => {
+    const instance = new mongoose.Document(data, updateUserSchema);
+    return instance.validate();
+};
+module.exports = validateUpdateUser

@@ -8,7 +8,6 @@ const changePasswordSchema = new mongoose.Schema({
     old_password: {
         type: String,
         required: true,
-        minLength: 6,
     },
     new_password: {
         type: String,
@@ -17,5 +16,9 @@ const changePasswordSchema = new mongoose.Schema({
     },
 });
 
-const ChangePassword = mongoose.model('ChangePassword', changePasswordSchema);
-module.exports = ChangePassword;
+const validateChangePassword = (data) => {
+    const instance = new mongoose.Document(data, changePasswordSchema);
+    return instance.validate();
+};
+
+module.exports = validateChangePassword;

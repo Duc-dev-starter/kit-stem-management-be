@@ -1,7 +1,7 @@
 const { OAuth2Client } = require("google-auth-library");
 const { USER_ROLE, HttpStatus, UserRoleEnum } = require("../consts");
 const HttpException = require("../exception");
-const { isEmptyObject, sendMail, encodePasswordUserNormal } = require("../utils");
+const { isEmptyObject, sendMail, encodePasswordUserNormal, formatPaginationData } = require("../utils");
 const { userRepository } = require('../repository');
 const mongoose = require("mongoose");
 const bcryptjs = require('bcrypt')
@@ -145,6 +145,10 @@ const userService = {
 
         //check if user exits
         const user = await userService.getUserById(userId, false);
+
+        if (user.role === UserRoleEnum.ADMIN) {
+            throw new HttpException(HttpStatus.BadRequest, `Admin cannot change password.`);
+        }
 
         if (!user.password) {
             throw new HttpException(HttpStatus.BadRequest, `User created by google cannot change password.`);

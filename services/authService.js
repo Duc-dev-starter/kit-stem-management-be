@@ -1,6 +1,6 @@
 const { HttpStatus } = require("../consts");
 const HttpException = require("../exception");
-const { createToken, sendMail, generateRandomPassword, encodePasswordUserNormal } = require("../utils");
+const { createToken, sendMail, generateRandomPassword, encodePasswordUserNormal, isEmptyObject } = require("../utils");
 const { OAuth2Client } = require('google-auth-library');
 const { authRepository } = require('../repository');
 const bcryptjs = require('bcrypt');
@@ -8,6 +8,9 @@ const bcryptjs = require('bcrypt');
 
 const authService = {
     login: async (model, isGoogle) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
         let email = model.email;
         let userLogin = model;
 

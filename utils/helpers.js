@@ -8,17 +8,10 @@ const getUserIdCurrent = (authHeader) => {
     return user;
 };
 
-const formatResponse = (data, success = true) => {
-    return {
-        success,
-        data,
-    };
-};
 
 const isEmptyObject = (obj) => obj && Object.keys(obj).length === 0;
 
 module.exports = {
-    formatResponse,
     getUserIdCurrent,
     isEmptyObject
 }

@@ -7,6 +7,12 @@ const { Blog, validateCreateBlog, validateSearchBlog, validateUpdateBlog } = req
 //Category Schema
 const { Category, validateSearchCategory, validateUpdateCategory, validateCreateCategory } = require('./category');
 
+//Kit Schema 
+const { Kit, validateChangeStatusKit, validateCreateKit, validateSearchKit, validateUpdateKit } = require('./kit')
+
+//Kit Log Schema
+const { KitLog, validateCreateKitLog, validateSearchKitLog } = require('./kitLog');
+
 module.exports = {
     User,
     validateChangePassword,
@@ -22,5 +28,13 @@ module.exports = {
     Category,
     validateSearchCategory,
     validateUpdateCategory,
-    validateCreateCategory
+    validateCreateCategory,
+    Kit,
+    validateChangeStatusKit,
+    validateCreateKit,
+    validateSearchKit,
+    validateUpdateKit,
+    KitLog,
+    validateSearchKitLog,
+    validateCreateKitLog
 }

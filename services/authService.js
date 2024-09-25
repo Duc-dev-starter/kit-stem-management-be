@@ -84,6 +84,9 @@ const authService = {
     },
 
     forgotPassword: async (email) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
         const user = await authRepository.findUserByEmail(email);
         if (!user) {
             throw new HttpException(HttpStatus.BadRequest, `User with mail: ${email} is not exists.`)

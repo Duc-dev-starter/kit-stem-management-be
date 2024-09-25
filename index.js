@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectToDB = require('./config/db');
 dotenv.config();
+const cors = require('cors');
 const { authRoutes, userRoutes, categoryRoutes, blogRoutes } = require('./routes');
 const { errorMiddleware } = require('./middleware');
 
@@ -11,6 +12,8 @@ const app = express();
 connectToDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 // Use routes
 app.use('/api/auth', authRoutes);

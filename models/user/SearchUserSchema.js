@@ -3,12 +3,13 @@ const { UserRole, UserRoleEnum } = require('../../consts');
 
 const searchUserSchema = new mongoose.Schema({
     keyword: {
-        type: String
+        type: String,
+        default: ''
     },
     role: {
         type: String,
         enum: Object.values(UserRole),
-        default: UserRoleEnum.CUSTOMER,
+        default: UserRoleEnum.ALL,
     },
     status: {
         type: Boolean,

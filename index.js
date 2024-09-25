@@ -4,6 +4,7 @@ const connectToDB = require('./config/db');
 dotenv.config();
 const cors = require('cors');
 const { authRoutes, userRoutes, categoryRoutes, blogRoutes } = require('./routes');
+const { authRoutes, userRoutes, categoryRoutes, blogRoutes, kitRoutes, kitLogRoutes } = require('./routes');
 const { errorMiddleware } = require('./middleware');
 
 const PORT = process.env.PORT || 5000;
@@ -20,6 +21,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/blog', blogRoutes);
+app.use('/api/kit', kitRoutes);
+app.use('/api/kit/log', kitLogRoutes);
 
 app.use(errorMiddleware);
 

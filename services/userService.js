@@ -20,10 +20,10 @@ const userService = {
             token_version: 0,
         };
 
-        if (isRegister && newUser.role !== UserRoleEnum.CUSTOMER) {
+        if (isRegister && newUser.role === UserRoleEnum.ADMIN) {
             throw new HttpException(
                 HttpStatus.BadRequest,
-                `You can only register with the Customer role!`,
+                `You can only register with the Customer, Staff and Manager role!`,
             );
         }
 
@@ -86,6 +86,9 @@ const userService = {
     },
 
     getUsers: async (model) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
         const { searchCondition, pageInfo } = model;
         const { keyword, role, status, is_deleted } = searchCondition;
         const { pageNum, pageSize } = pageInfo;

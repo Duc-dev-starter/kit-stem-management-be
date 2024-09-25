@@ -4,7 +4,7 @@ const COLLECTION_NAME = {
     CATEGORY: 'Category',
     LAB: 'Lab',
     LAB_LOG: 'LabLog',
-    SESSION: 'Session',
+    KIT: 'Kit',
     LESSON: 'Lesson',
     REVIEW: 'Review',
     CART: 'Cart',

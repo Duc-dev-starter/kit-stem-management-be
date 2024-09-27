@@ -66,51 +66,13 @@ const categoryRepository = {
         return await Category.find(query).countDocuments().exec();
     },
     findCategoriesWithPagination: async (query, pageNum, pageSize) => {
-        const skip = (pageNum - 1) * pageSize;
-
-        return await Category.aggregate([
-            {
-                $match: {
-                    ...query,
-                    is_deleted: false,
-                },
-            },
-            {
-                $lookup: {
-                    from: 'users', // Tên collection của users
-                    localField: 'user_id', // Trường trong collection category
-                    foreignField: '_id', // Trường trong collection users
-                    as: 'user', // Tên trường mới sẽ chứa thông tin người dùng
-                },
-            },
-            {
-                $unwind: {
-                    path: '$user',
-                    preserveNullAndEmptyArrays: true, // Giữ lại category nếu không tìm thấy người dùng
-                },
-            },
-            {
-                $addFields: {
-                    user_name: '$user.name', // Giả sử tên trường trong collection users là 'name'
-                },
-            },
-            {
-                $project: {
-                    user_info: 0, // Bỏ qua trường user_info nếu không cần
-                },
-            },
-            {
-                $sort: { updated_at: -1 }, // Sắp xếp theo updated_at giảm dần
-            },
-            {
-                $skip: skip, // Phân trang
-            },
-            {
-                $limit: pageSize, // Giới hạn số lượng kết quả
-            },
-
-        ]);
-    },
+        return await Category.find(query)
+            .find(query)
+            .sort({ updated_at: -1 })
+            .skip((pageNum - 1) * pageSize)
+            .limit(pageSize)
+            .exec();
+    }
 }
 
 module.exports = categoryRepository;

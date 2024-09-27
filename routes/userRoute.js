@@ -18,13 +18,13 @@ router.post('/create', authMiddleWare([UserRoleEnum.ADMIN]), validationMiddlewar
 
 // POST domain:/api/users/search -> Get all users includes params: keyword, status, role
 router.post('/search',
-    authMiddleWare([UserRoleEnum.ADMIN]),
+    authMiddleWare([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]),
     validationMiddleware(validateSearchUser),
     userController.getUsers,
 );
 
 // GET domain:/api/users/:id -> Get user by id
-router.get('/:id', authMiddleWare([], true), userController.getUserById);
+router.get('/:id', authMiddleWare([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.CUSTOMER, UserRoleEnum.STAFF]), userController.getUserById);
 
 // PUT domain:/api/users/change-password -> Change password
 router.put('/change-password', authMiddleWare(), validationMiddleware(validateChangePassword), userController.changePassword);

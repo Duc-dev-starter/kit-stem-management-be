@@ -11,6 +11,7 @@ const COLLECTION_NAME = {
     PURCHASE: 'Purchase',
     PAYOUT: 'Payout',
     BLOG: 'Blog',
+    SUPPORT_HISTORY: 'SupportHistory'
 }
 
 module.exports = COLLECTION_NAME;

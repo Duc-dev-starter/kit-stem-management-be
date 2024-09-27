@@ -2,49 +2,95 @@ const { User } = require("../models");
 
 const userRepository = {
     findByEmail: async (email) => {
-        return await User.findOne({
-            email: { $regex: new RegExp('^' + email + '$', 'i') },
-            is_deleted: false
-        });
+        try {
+            return await User.findOne({
+                email: { $regex: new RegExp('^' + email + '$', 'i') },
+                is_deleted: false
+            });
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
     createNewUser: async (user) => {
-        return await User.create(user);
+        try {
+            return await User.create(user);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
     findById: async (userId) => {
-        return await User.findOne({ _id: userId, is_deleted: false }).lean()
+        try {
+            return await User.findOne({ _id: userId, is_deleted: false }).lean()
+        } catch (error) {
+            console.log(error);
+        }
     },
     updatePassword: async (user, userId, newPassword) => {
-        return await User.findByIdAndUpdate(userId,
-            {
-                ...user,
-                password: newPassword,
-                updatedAt: new Date(),
-            }
-        ).lean()
+        try {
+            return await User.findByIdAndUpdate(userId,
+                {
+                    ...user,
+                    password: newPassword,
+                    updatedAt: new Date(),
+                }
+            ).lean()
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
     updateStatus: async (userId, status) => {
-        return await User.updateOne({ _id: userId }, { status, updatedAt: new Date() })
+        try {
+            return await User.updateOne({ _id: userId }, { status, updatedAt: new Date() })
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
     updateRole: async (userId, role) => {
-        return await User.updateOne({ _id: userId }, { role, updatedAt: new Date() })
+        try {
+            return await User.updateOne({ _id: userId }, { role, updatedAt: new Date() })
+        } catch (error) {
+            console.log(error);
+        }
     },
     updateUser: async (userId, updateData) => {
-        return await User.updateOne({ _id: userId }, updateData)
+        try {
+            return await User.updateOne({ _id: userId }, updateData)
+        } catch (error) {
+            return;
+        }
     },
     deleteUser: async (userId) => {
-        return await User.updateOne({ _id: userId }, { is_deleted: true, updatedAt: new Date() })
+        try {
+            return await User.updateOne({ _id: userId }, { is_deleted: true, updatedAt: new Date() })
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
     countUser: async (query) => {
-        return await User.find(query).countDocuments().exec();
+        try {
+            return await User.find(query).countDocuments().exec();
+        } catch (error) {
+            console.log(error);
+        }
     },
     findUsersWithPagination: async (query, pageNum, pageSize) => {
-        return await User.find(query)
-            .find(query)
-            .sort({ updated_at: -1 })
-            .select('-password')
-            .skip((pageNum - 1) * pageSize)
-            .limit(pageSize)
-            .exec();
+        try {
+            return await User.find(query)
+                .find(query)
+                .sort({ updated_at: -1 })
+                .select('-password')
+                .skip((pageNum - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
 
 };

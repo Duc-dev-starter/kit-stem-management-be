@@ -67,7 +67,7 @@ const blogService = {
         const detail = await blogRepository.findBlogWithUserAndCategory(id);
 
         if (!detail || detail.length === 0) {
-            throw new HttpException(HttpStatus.BadRequest, `Item is not exists.`);
+            throw new HttpException(HttpStatus.BadRequest, `Blog is not exists.`);
         }
         return detail[0];
     },

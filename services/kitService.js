@@ -58,7 +58,7 @@ const kitService = {
             throw new HttpException(HttpStatus.BadRequest, '', errorResults);
         }
 
-        const createdItem = await kitRepository.create(model);
+        const createdItem = await kitRepository.createKit(model);
         if (!createdItem) {
             throw new HttpException(HttpStatus.Accepted, `Create kit failed!`);
         }
@@ -101,12 +101,12 @@ const kitService = {
 
         query = itemsQuery(query, { status, is_deleted });
 
-        const { kits, rowCount } = await kitRepository.findKitsWithLabs(query, pageNum, pageSize);
+        const { kits, rowCount } = await kitRepository.findKitsWithPagination(query, pageNum, pageSize);
         return formatPaginationData(kits, pageNum, pageSize, rowCount);
     },
 
     getKit: async (id) => {
-        const detail = await kitRepository.findKitById(id);
+        const detail = await kitRepository.findKitWithUserAndCategoryAndLabs(id);
         if (!detail) {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);
         }
@@ -122,7 +122,7 @@ const kitService = {
         const userId = user.id;
         const { kit_id, new_status, comment } = model;
         // check item exits
-        const kit = await kitService.getKit(kit_id);
+        const kit = await kitRepository.findKitById(kit_id);
         if (!kit) {
             throw new HttpException(HttpStatus.NotFound, 'Kit not found');
         }
@@ -154,7 +154,7 @@ const kitService = {
 
         const updatedItem = await kitRepository.changeStatusKit(kit_id, new_status);
 
-        const newLogs = await kitLogRepository.create({
+        const newLogs = await kitLogRepository.createKitLog({
             user_id: userId,
             kit_id,
             old_status,
@@ -172,7 +172,7 @@ const kitService = {
             throw new HttpException(HttpStatus.BadRequest, 'Update item info failed!');
         }
 
-        const result = await kitService.getKit(kit_id);
+        const result = await kitRepository.findKitById(kit_id);
         return result;
     },
 
@@ -184,7 +184,7 @@ const kitService = {
         const errorResults = [];
 
         // check item exits
-        const kit = await kitService.getKit(id);
+        const kit = await kitRepository.findKitById(id);
         console.log(kit)
         if (kit && kit.user_id) {
             // check valid user
@@ -248,12 +248,12 @@ const kitService = {
             throw new HttpException(HttpStatus.BadRequest, 'Update item info failed!');
         }
 
-        const result = await kitService.getKit(id);
+        const result = await kitRepository.findKitById(id);
         return result;
     },
 
     deleteKit: async (id, userId) => {
-        const kit = await kitService.getKit(id);
+        const kit = await kitRepository.findKitById(id);
 
         if (!kit || kit.is_deleted) {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);

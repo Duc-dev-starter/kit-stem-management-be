@@ -49,8 +49,13 @@ const kitLogRepository = {
         return { kitLogs, rowCount };
     },
 
-    create: async (newLogs) => {
-        return await KitLog.create(newLogs);
+    createKitLog: async (newLogs) => {
+        try {
+            return await KitLog.create(newLogs);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
 
 

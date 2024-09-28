@@ -185,10 +185,8 @@ const kitService = {
 
         // check item exits
         const kit = await kitRepository.findKitById(id);
-        console.log(kit)
         if (kit && kit.user_id) {
             // check valid user
-            console.log(kit)
             checkUserMatch(userId, kit.user_id.toString(), 'kit');
         } else {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);

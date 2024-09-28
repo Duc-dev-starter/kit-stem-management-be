@@ -5,6 +5,7 @@ const blogController = require('./blogController');
 const kitController = require('./kitController');
 const kitLogController = require('./kitLogController');
 const labController = require('./labController');
+const clientController = require('./clientController');
 
 module.exports = {
     authController,
@@ -13,5 +14,6 @@ module.exports = {
     blogController,
     kitController,
     kitLogController,
-    labController
+    labController,
+    clientController
 }

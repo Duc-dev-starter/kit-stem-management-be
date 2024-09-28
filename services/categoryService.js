@@ -76,7 +76,6 @@ const categoryService = {
             ...query,
             is_deleted,
         };
-
         // Tính toán số lượng trang
         const totalItems = await categoryRepository.countCategory(query);
 

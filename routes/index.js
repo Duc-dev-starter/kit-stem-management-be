@@ -1,10 +1,11 @@
 const authRoutes = require('./authRoutes');
-const userRoutes = require('./userRoute');
+const userRoutes = require('./userRoutes');
 const categoryRoutes = require('./categoryRoutes');
-const blogRoutes = require('./blogRoute');
+const blogRoutes = require('./blogRoutes');
 const kitRoutes = require('./kitRoutes');
 const kitLogRoutes = require('./kitLogRoutes');
 const labRoutes = require('./labRoutes');
+const clientRoutes = require('./clientRoutes');
 
 module.exports = {
     authRoutes,
@@ -13,5 +14,6 @@ module.exports = {
     blogRoutes,
     kitRoutes,
     kitLogRoutes,
-    labRoutes
+    labRoutes,
+    clientRoutes
 };

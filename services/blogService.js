@@ -118,12 +118,12 @@ const blogService = {
             throw new HttpException(HttpStatus.BadRequest, 'Update item info failed!');
         }
 
-        const result = await blogService.getBlog(id);
+        const result = await blogRepository.findBlogById(id);
         return result;
     },
 
     deleteBlog: async (id) => {
-        const item = await blogService.getBlog(id);
+        const item = await blogRepository.findBlogById(id);
         if (!item || item.is_deleted) {
             throw new HttpException(HttpStatus.BadRequest, `Category is not exists.`);
         }

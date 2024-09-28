@@ -1,10 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectToDB = require('./config/db');
 dotenv.config();
 const cors = require('cors');
 const { authRoutes, userRoutes, categoryRoutes, blogRoutes, kitRoutes, kitLogRoutes, labRoutes, clientRoutes } = require('./routes');
 const { errorMiddleware } = require('./middleware');
+const { connectToDB } = require('./config');
 
 const PORT = process.env.PORT || 5000;
 const app = express();

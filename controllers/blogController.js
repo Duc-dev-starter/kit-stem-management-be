@@ -1,7 +1,7 @@
 const { redisClient } = require("../config");
 const { HttpStatus } = require("../consts");
 const { blogService } = require("../services");
-const { formatResponse } = require("../utils");
+const { formatResponse, createCacheKey } = require("../utils");
 
 const blogController = {
     create: async (req, res, next) => {
@@ -18,7 +18,7 @@ const blogController = {
     getBlogs: async (req, res, next) => {
         try {
             const model = req.body;
-            const cacheKey = "blogs_cache";
+            const cacheKey = `blogs_cache_${createCacheKey(model)}`;
             const cachedBlogs = await redisClient.get(cacheKey);
             if (cachedBlogs) {
                 return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedBlogs)));

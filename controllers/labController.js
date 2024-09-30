@@ -1,7 +1,7 @@
 const { redisClient } = require("../config");
 const { HttpStatus } = require("../consts");
 const { labService } = require("../services");
-const { formatResponse } = require("../utils");
+const { formatResponse, createCacheKey } = require("../utils");
 
 const labController = {
     create: async (req, res, next) => {
@@ -18,7 +18,7 @@ const labController = {
     getLabs: async (req, res, next) => {
         try {
             const model = req.body;
-            const cacheKey = 'labs_cache';
+            const cacheKey = `labs_cache_${createCacheKey(model)}`;
             const cacheLabs = await redisClient.get(cacheKey);
             if (cacheLabs) {
                 return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cacheLabs)));

@@ -1,7 +1,7 @@
 const { redisClient } = require("../config");
 const { HttpStatus } = require("../consts");
 const { kitService } = require("../services");
-const { formatResponse } = require("../utils");
+const { formatResponse, createCacheKey } = require("../utils");
 
 const kitController = {
     create: async (req, res, next) => {
@@ -18,7 +18,7 @@ const kitController = {
     getKits: async (req, res, next) => {
         try {
             const model = req.body;
-            const cacheKey = 'kits_cache';
+            const cacheKey = `kits_cache_${createCacheKey(model)}`;
             const cacheKits = await redisClient.get(cacheKey);
             if (cacheKits) {
                 return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cacheKits)));

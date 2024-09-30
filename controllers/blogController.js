@@ -9,7 +9,6 @@ const blogController = {
         try {
             const model = req.body;
             const blog = await blogService.create(model, req.user);
-            await clearBlogCache();
             res.status(HttpStatus.Success).json(formatResponse(blog));
         } catch (error) {
             next(error);

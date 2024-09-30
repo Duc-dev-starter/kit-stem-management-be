@@ -17,7 +17,8 @@ const categoryService = {
         }
 
         //check name valid
-        const category = await categoryRepository.findCategoryByName(newModel);
+        const category = await categoryRepository.findCategoryByName(newModel.name);
+        console.log(category);
         if (category) {
             errorResults.push({
                 message: `Category with name is '${newModel.name}' already exists!`,
@@ -39,6 +40,8 @@ const categoryService = {
         if (errorResults.length) {
             throw new HttpException(HttpStatus.BadRequest, '', errorResults);
         }
+
+        console.log(errorResults);
 
         newModel.user_id = userId;
         const createdCategory = await categoryRepository.createCategory(newModel);

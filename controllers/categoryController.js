@@ -8,7 +8,6 @@ const categoryController = {
         try {
             const model = req.body;
             const category = await categoryService.create(model, req.user.id);
-            await redisClient.del("categories_cache");
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -17,13 +16,7 @@ const categoryController = {
     getCategories: async (req, res, next) => {
         try {
             const model = req.body;
-            const cacheKey = `categories_cache_${createCacheKey(model)}`;
-            const cachedCategories = await redisClient.get(cacheKey);
-            if (cachedCategories) {
-                return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedCategories)));
-            }
             const result = await categoryService.getCategories(model);
-            await redisClient.set(cacheKey, JSON.stringify(result), 'Ex', 3600);
             res.status(HttpStatus.Success).json(formatResponse(result));
         } catch (error) {
             next(error);
@@ -50,7 +43,6 @@ const categoryController = {
             const categoryId = req.params.id
             const category = await categoryService.updateCategory(categoryId, model);
             await redisClient.del(`category:${categoryId}`);
-            await redisClient.del('categories_cache');
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -61,7 +53,6 @@ const categoryController = {
             const categoryId = req.params.id;
             await categoryService.deleteCategory(categoryId);
             redisClient.del(`category:${categoryId}`);
-            redisClient.del('categories_cache');
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);

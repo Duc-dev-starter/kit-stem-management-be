@@ -21,7 +21,6 @@ const userController = {
                 routerPath === API_PATH.USERS_GOOGLE,
                 !(routerPath === API_PATH.CREATE_USERS),
             )
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Created).json(formatResponse(user));
         } catch (error) {
             next(error);
@@ -30,13 +29,7 @@ const userController = {
     getUsers: async (req, res, next) => {
         try {
             const model = req.body;
-            const cacheKey = `users_cache_${createCacheKey(model)}`;
-            const cachedUsers = await redisClient.get(cacheKey);
-            if (cachedUsers) {
-                return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedUsers)));
-            }
             const result = await userService.getUsers(model);
-            await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 3600);
             res.status(HttpStatus.Success).json(formatResponse(result));
         } catch (error) {
             next(error);
@@ -61,7 +54,6 @@ const userController = {
         try {
             await userService.changePassword(req.body);
             await redisClient.del(`user:${req.body.user_id}`);
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);
@@ -71,7 +63,6 @@ const userController = {
         try {
             await userService.changeStatus(req.body);
             await redisClient.del(`user:${req.body.user_id}`);
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);
@@ -81,7 +72,6 @@ const userController = {
         try {
             await userService.changeRole(req.body);
             await redisClient.del(`user:${req.body.user_id}`);
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);
@@ -92,7 +82,6 @@ const userController = {
             const userId = req.params.id;
             const user = await userService.updateUser(userId, req.body);
             await redisClient.del(`user:${userId}`);
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Success).json(formatResponse(user));
         } catch (error) {
             next(error);
@@ -103,7 +92,6 @@ const userController = {
             const userId = req.params.id;
             await userService.deleteUser(userId);
             await redisClient.del(`user:${userId}`);
-            await redisClient.del("users_cache");
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);

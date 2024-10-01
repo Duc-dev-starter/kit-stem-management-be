@@ -194,7 +194,7 @@ const userService = {
             throw new HttpException(HttpStatus.BadRequest, `User status is already ${model.status}`);
         }
 
-        const updateUserId = userRepository.updateStatus(userId, model.status);
+        const updateUserId = await userRepository.updateStatus(userId, model.status);
 
         if (!updateUserId.acknowledged) {
             throw new HttpException(HttpStatus.BadRequest, 'Update user status failed!');

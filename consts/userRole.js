@@ -8,7 +8,15 @@ const UserRoleEnum = {
 
 const UserRole = UserRoleEnum.ADMIN | UserRoleEnum.CUSTOMER | UserRoleEnum.MANAGER | UserRoleEnum.STAFF | UserRoleEnum.ALL;
 
+const UserArr = [
+    UserRoleEnum.ALL,
+    UserRoleEnum.MANAGER,
+    UserRoleEnum.STAFF,
+    UserRoleEnum.CUSTOMER,
+    UserRoleEnum.ADMIN
+];
 module.exports = {
     UserRoleEnum,
-    UserRole
+    UserRole,
+    UserArr
 };

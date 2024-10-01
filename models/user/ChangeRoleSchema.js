@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { UserRole } = require('../../consts');
+const { UserArr } = require('../../consts');
 
 const changeRoleSchema = new mongoose.Schema({
     user_id: {
@@ -8,7 +9,7 @@ const changeRoleSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: UserRole
+        enum: UserArr
     }
 })
 

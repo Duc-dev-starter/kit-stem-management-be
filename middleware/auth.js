@@ -13,7 +13,7 @@ const authMiddleWare = (roles = [], isClient = false) => {
             }
         } else {
             if (!authHeader) {
-                return res.status(HttpStatus.NotFound).json({ message: 'No token, authorization denied.' });
+                return res.status(HttpStatus.Unauthorized).json({ message: 'No token, authorization denied.' });
             }
         }
 
@@ -26,7 +26,7 @@ const handleCheckToken = async (req, res, next, authHeader, roles) => {
     if (authHeader) {
         const token = authHeader.split(' ')[1];
         if (!token) {
-            return res.status(HttpStatus.NotFound).json({ message: 'No token, authorization denied.' });
+            return res.status(HttpStatus.Unauthorized).json({ message: 'No token, authorization denied.' });
         }
 
         try {
@@ -40,7 +40,7 @@ const handleCheckToken = async (req, res, next, authHeader, roles) => {
             req.user.name = userToken.name;
             const user = await userSchema.findOne({ _id: userToken.id, is_deleted: false }).lean();
             if (!user || Number(user?.token_version?.toString() || 0) !== userToken.version) {
-                return res.status(HttpStatus.Forbidden).json({ message: 'Access denied: invalid token!' });
+                return res.status(HttpStatus.Unauthorized).json({ message: 'Access denied: invalid token!' });
             }
 
             // Check roles if provided
@@ -53,9 +53,9 @@ const handleCheckToken = async (req, res, next, authHeader, roles) => {
             logger.error(`[ERROR] Msg: ${token}`);
             if (error instanceof Error) {
                 if (error.name === 'TokenExpiredError') {
-                    res.status(HttpStatus.Forbidden).json({ message: 'Token is expired' });
+                    res.status(HttpStatus.Unauthorized).json({ message: 'Token is expired' });
                 } else {
-                    res.status(HttpStatus.Forbidden).json({ message: 'Token is not valid' });
+                    res.status(HttpStatus.Unauthorized).json({ message: 'Token is not valid' });
                 }
             } else {
                 res.status(HttpStatus.InternalServerError).json({ message: 'An unknown error occurred' });

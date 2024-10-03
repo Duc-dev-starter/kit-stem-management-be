@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { COLLECTION_NAME } = require('../../consts');
+const { LabStatus, LabStatusEnum, COLLECTION_NAME } = require('../../consts');
 
 const createLabSchema = new mongoose.Schema({
     name: {
@@ -22,6 +22,12 @@ const createLabSchema = new mongoose.Schema({
     content: {
         type: String,
         default: ''
+    },
+    status: {
+        type: String,
+        enum: Object.values(LabStatus),
+        default: LabStatusEnum.NEW,
+        required: true,
     },
     lab_url: {
         type: String,

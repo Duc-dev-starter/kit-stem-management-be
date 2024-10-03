@@ -15,7 +15,7 @@ const userController = {
     register: async (req, res, next) => {
         try {
             const model = req.body;
-            const routerPath = req.route.path;
+            const routerPath = req.originalUrl;
             const user = await userService.createUser(
                 model,
                 routerPath === API_PATH.USERS_GOOGLE,

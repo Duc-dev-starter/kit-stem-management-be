@@ -30,7 +30,7 @@ const userService = {
         // create a new user by google
         if (isGoogle) {
             if (model.google_id) {
-                newUser = await formatUserByGoogle(model.google_id, newUser);
+                newUser = await userService.formatUserByGoogle(model.google_id, newUser);
             } else {
                 throw new HttpException(
                     HttpStatus.BadRequest,

@@ -20,17 +20,17 @@ const userService = {
             token_version: 0,
         };
 
-        if (isRegister && newUser.role !== UserRoleEnum.CUSTOMER) {
+        if (isRegister && newUser.role === UserRoleEnum.ADMIN) {
             throw new HttpException(
                 HttpStatus.BadRequest,
-                `You can only register with the Customer role!`,
+                `You can only register with the Customer, Staff and Manager role!`,
             );
         }
 
         // create a new user by google
         if (isGoogle) {
             if (model.google_id) {
-                newUser = await formatUserByGoogle(model.google_id, newUser);
+                newUser = await userService.formatUserByGoogle(model.google_id, newUser);
             } else {
                 throw new HttpException(
                     HttpStatus.BadRequest,
@@ -86,6 +86,9 @@ const userService = {
     },
 
     getUsers: async (model) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
         const { searchCondition, pageInfo } = model;
         const { keyword, role, status, is_deleted } = searchCondition;
         const { pageNum, pageSize } = pageInfo;
@@ -191,7 +194,7 @@ const userService = {
             throw new HttpException(HttpStatus.BadRequest, `User status is already ${model.status}`);
         }
 
-        const updateUserId = userRepository.updateStatus(userId, model.status);
+        const updateUserId = await userRepository.updateStatus(userId, model.status);
 
         if (!updateUserId.acknowledged) {
             throw new HttpException(HttpStatus.BadRequest, 'Update user status failed!');

@@ -4,13 +4,14 @@ const COLLECTION_NAME = {
     CATEGORY: 'Category',
     LAB: 'Lab',
     LAB_LOG: 'LabLog',
-    SESSION: 'Session',
+    KIT: 'Kit',
     LESSON: 'Lesson',
     REVIEW: 'Review',
     CART: 'Cart',
     PURCHASE: 'Purchase',
     PAYOUT: 'Payout',
     BLOG: 'Blog',
+    SUPPORT_HISTORY: 'SupportHistory'
 }
 
 module.exports = COLLECTION_NAME;

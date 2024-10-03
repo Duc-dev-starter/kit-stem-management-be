@@ -1,6 +1,7 @@
+const { redisClient } = require("../config");
 const { HttpStatus } = require("../consts");
 const { categoryService } = require("../services");
-const { formatResponse } = require("../utils");
+const { formatResponse, createCacheKey } = require("../utils");
 
 const categoryController = {
     create: async (req, res, next) => {
@@ -23,8 +24,14 @@ const categoryController = {
     },
     getCategory: async (req, res, next) => {
         try {
-            const model = req.body;
+            const categoryId = req.params.id;
+            const cachedCategory = await redisClient.get(`category:${categoryId}`);
+
+            if (cachedCategory) {
+                return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedCategory)));
+            }
             const category = await categoryService.getCategory(req.params.id);
+            await redisClient.setEx(`category:${categoryId}`, 3600, JSON.stringify(category));
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -33,7 +40,9 @@ const categoryController = {
     updateCategory: async (req, res, next) => {
         try {
             const model = req.body;
-            const category = await categoryService.updateCategory(req.params.id, model);
+            const categoryId = req.params.id
+            const category = await categoryService.updateCategory(categoryId, model);
+            await redisClient.del(`category:${categoryId}`);
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -41,7 +50,9 @@ const categoryController = {
     },
     deleteCategory: async (req, res, next) => {
         try {
-            await categoryService.deleteCategory(req.params.id);
+            const categoryId = req.params.id;
+            await categoryService.deleteCategory(categoryId);
+            redisClient.del(`category:${categoryId}`);
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);

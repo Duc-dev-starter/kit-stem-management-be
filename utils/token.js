@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 // create token
 const createToken = (user) => {
-    const dataInToken = { id: user.id, role: user.role, version: user.token_version };
+    const dataInToken = { id: user.id, role: user.role, version: user.token_version, name: user.name };
     const secret = process.env.JWT_TOKEN_SECRET;
     const expiresIn = 28800; // 8 hours
     if (!secret) {

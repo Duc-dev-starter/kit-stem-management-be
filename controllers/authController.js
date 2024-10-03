@@ -6,7 +6,7 @@ const authController = {
     login: async (req, res, next) => {
         try {
             const model = req.body;
-            const isGoogle = req.route.path === API_PATH.AUTH_GOOGLE ? true : false;
+            const isGoogle = req.originalUrl === API_PATH.AUTH_GOOGLE ? true : false;
             const accessToken = await authService.login(model, isGoogle);
             res.status(HttpStatus.Success).json(formatResponse(accessToken));
         } catch (error) {

@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 
 const blogRepository = {
     createBlog: async (model) => {
-        return await Blog.create(model);
+        try {
+            return await Blog.create(model);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
     },
 
     findBlogByTitle: async (title) => {
@@ -95,7 +100,7 @@ const blogRepository = {
             {
                 $project: {
                     _id: 1,
-                    name: 1,
+                    title: 1,
                     user_id: 1,
                     user_name: '$user.name',
                     category_id: 1,

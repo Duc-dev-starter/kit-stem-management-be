@@ -67,7 +67,7 @@ const blogService = {
         const detail = await blogRepository.findBlogWithUserAndCategory(id);
 
         if (!detail || detail.length === 0) {
-            throw new HttpException(HttpStatus.BadRequest, `Item is not exists.`);
+            throw new HttpException(HttpStatus.BadRequest, `Blog is not exists.`);
         }
         return detail[0];
     },
@@ -118,12 +118,12 @@ const blogService = {
             throw new HttpException(HttpStatus.BadRequest, 'Update item info failed!');
         }
 
-        const result = await blogService.getBlog(id);
+        const result = await blogRepository.findBlogById(id);
         return result;
     },
 
     deleteBlog: async (id) => {
-        const item = await blogService.getBlog(id);
+        const item = await blogRepository.findBlogById(id);
         if (!item || item.is_deleted) {
             throw new HttpException(HttpStatus.BadRequest, `Category is not exists.`);
         }

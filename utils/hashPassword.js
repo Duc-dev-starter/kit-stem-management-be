@@ -15,7 +15,12 @@ const generateRandomPassword = (length) => {
         .replace(/[^a-zA-Z0-9]/g, '');
 }
 
+const createCacheKey = (data) => {
+    return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
+};
+
 module.exports = {
     generateRandomPassword,
-    encodePasswordUserNormal
+    encodePasswordUserNormal,
+    createCacheKey
 };

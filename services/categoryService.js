@@ -17,7 +17,8 @@ const categoryService = {
         }
 
         //check name valid
-        const category = await categoryRepository.findCategoryByName(newModel);
+        const category = await categoryRepository.findCategoryByName(newModel.name);
+        console.log(category);
         if (category) {
             errorResults.push({
                 message: `Category with name is '${newModel.name}' already exists!`,
@@ -26,7 +27,7 @@ const categoryService = {
         }
 
         if (model.parent_category_id) {
-            const itemParent = await categoryService.getCategory(model.parent_category_id);
+            const itemParent = await categoryRepository.findCategoryById(model.parent_category_id);
             if (itemParent.parent_category_id) {
                 errorResults.push({
                     message: `The selected category with name is '${itemParent.name}' cannot be used as a parent category!`,
@@ -39,6 +40,8 @@ const categoryService = {
         if (errorResults.length) {
             throw new HttpException(HttpStatus.BadRequest, '', errorResults);
         }
+
+        console.log(errorResults);
 
         newModel.user_id = userId;
         const createdCategory = await categoryRepository.createCategory(newModel);
@@ -76,7 +79,6 @@ const categoryService = {
             ...query,
             is_deleted,
         };
-
         // Tính toán số lượng trang
         const totalItems = await categoryRepository.countCategory(query);
 
@@ -84,7 +86,7 @@ const categoryService = {
         return formatPaginationData(categories, pageNum, pageSize, totalItems);
     },
     getCategory: async (id) => {
-        const category = await categoryRepository.findCategoryById(id);
+        const category = await categoryRepository.findCategoryWithUser(id);
         if (!category) {
             throw new HttpException(HttpStatus.BadRequest, `Category is not exists.`);
         }
@@ -98,7 +100,7 @@ const categoryService = {
         const errorResults = [];
 
         // check item exits
-        const item = await categoryService.getCategory(id);
+        const item = await categoryRepository.findCategoryById(id);
 
         // check name duplicates
         if (item.name.toLowerCase() !== model.name.toLowerCase()) {
@@ -124,11 +126,11 @@ const categoryService = {
             throw new HttpException(HttpStatus.BadRequest, 'Update category info failed!');
         }
 
-        const result = await categoryService.getCategory(id);
+        const result = await categoryRepository.findCategoryById(id);
         return result;
     },
     deleteCategory: async (id) => {
-        const detail = await categoryService.getCategory(id);
+        const detail = await categoryRepository.findCategoryById(id);
         if (!detail || detail.is_deleted) {
             throw new HttpException(HttpStatus.BadRequest, `Category is not exists.`);
         }

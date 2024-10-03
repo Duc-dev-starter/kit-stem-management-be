@@ -11,6 +11,7 @@ const kitService = {
         }
 
         model.user_id = userId;
+        delete model.status;
         const errorResults = [];
 
         // check category valid

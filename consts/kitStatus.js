@@ -4,7 +4,7 @@ const KitStatusEnum = {
     SHIPPED: "shipped",
     DELIVERED: "delivered",
     CONFIRMED_DELIVERED: "confirmed_delivered",
-    ACTIVE: "active", // Kit sẵn sàng sử dụng khi đã được giao nhận thành công
+    ACTIVE: "active",
     SOLD_OUT: "sold_out",
     POPULAR: "popular",
     INACTIVE: "inactive",

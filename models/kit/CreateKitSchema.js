@@ -21,12 +21,6 @@ const createKitSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    status: {
-        type: String,
-        enum: Object.values(KitStatus),
-        default: KitStatusEnum.NEW,
-        required: true,
-    },
     video_url: {
         type: String
     },

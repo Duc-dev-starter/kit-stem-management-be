@@ -12,7 +12,7 @@ const labService = {
         const errorResults = [];
 
         model.user_id = userId;
-
+        delete model.status;
         // check category valid
         const category = await categoryRepository.findCategoryById(model.category_id)
         if (!category) {

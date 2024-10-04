@@ -41,7 +41,6 @@ const categoryService = {
             throw new HttpException(HttpStatus.BadRequest, '', errorResults);
         }
 
-        console.log(errorResults);
 
         newModel.user_id = userId;
         const createdCategory = await categoryRepository.createCategory(newModel);

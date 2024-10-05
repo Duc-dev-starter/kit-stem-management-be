@@ -204,7 +204,7 @@ const labService = {
         if (!detail) {
             throw new HttpException(HttpStatus.BadRequest, `Lab is not exists.`);
         }
-        return detail;
+        return detail[0];
     },
 
     updateLab: async (id, model, userId) => {

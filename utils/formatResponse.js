@@ -1,4 +1,15 @@
 const formatPaginationData = (data, pageNum, pageSize, totalItems) => {
+    if (pageSize === 0) {
+        return {
+            pageData: data,
+            pageInfo: {
+                pageNum: 1,
+                pageSize: totalItems,
+                totalItems: totalItems,
+                totalPages: 1,
+            },
+        };
+    }
     return {
         pageData: data,
         pageInfo: {

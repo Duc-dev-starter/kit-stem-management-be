@@ -14,7 +14,6 @@ router.post('/create',
 
 // // POST domain:/api/kit/search -> Get all items
 router.post('/search',
-    authMiddleWare([UserRoleEnum.MANAGER]),
     validationMiddleware(validateSearchKit),
     kitController.getKits,
 );

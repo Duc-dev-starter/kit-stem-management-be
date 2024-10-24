@@ -168,12 +168,10 @@ const labService = {
         return true;
     },
 
-    getLabs: async (model, user) => {
+    getLabs: async (model) => {
         if (isEmptyObject(model)) {
             throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
         }
-        const userId = user.id;
-        const userRole = user.role;
         const { searchCondition, pageInfo } = model;
         const { keyword, category_id, status, is_deleted } = searchCondition;
         const { pageNum, pageSize } = pageInfo;

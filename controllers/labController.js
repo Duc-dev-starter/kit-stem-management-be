@@ -17,7 +17,7 @@ const labController = {
     getLabs: async (req, res, next) => {
         try {
             const model = req.body;
-            const result = await labService.getLabs(model, req.user);
+            const result = await labService.getLabs(model);
             res.status(HttpStatus.Success).json(formatResponse(result));
         } catch (error) {
             next(error);

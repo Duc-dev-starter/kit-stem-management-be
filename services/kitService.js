@@ -67,12 +67,10 @@ const kitService = {
 
     },
 
-    getKits: async (model, user) => {
+    getKits: async (model) => {
         if (isEmptyObject(model)) {
             throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
         }
-        const userId = user.id;
-        const userRole = user.role;
         const { searchCondition, pageInfo } = model;
         const { keyword, category_id, status, is_deleted } = searchCondition;
         const { pageNum, pageSize } = pageInfo;
@@ -92,13 +90,6 @@ const kitService = {
             };
         }
 
-
-        if (userRole === UserRoleEnum.MANAGER) {
-            query = {
-                ...query,
-                user_id: new mongoose.Types.ObjectId(userId),
-            };
-        }
 
         query = itemsQuery(query, { status, is_deleted });
 

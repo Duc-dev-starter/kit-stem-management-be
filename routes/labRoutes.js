@@ -15,7 +15,6 @@ router.post(
 
 // POST domain:/api/kit/search -> Get all items
 router.post('/search',
-    authMiddleWare([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]),
     validationMiddleware(validateSearchLab),
     labController.getLabs,
 );

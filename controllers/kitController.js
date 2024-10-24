@@ -17,7 +17,7 @@ const kitController = {
     getKits: async (req, res, next) => {
         try {
             const model = req.body;
-            const result = await kitService.getKits(model, req.user);
+            const result = await kitService.getKits(model);
             res.status(HttpStatus.Success).json(formatResponse(result));
         } catch (error) {
             next(error);

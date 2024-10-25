@@ -1,14 +1,27 @@
-const { categoryController, blogController, clientController } = require('../controllers');
+const { categoryController, blogController, clientController, labController, kitController } = require('../controllers');
 const { authMiddleWare, validationMiddleware } = require('../middleware');
-const { validateSearchCategory, validateSearchBlog } = require('../models');
+const { validateSearchCategory, validateSearchBlog, validateSearchLab, validateSearchKit } = require('../models');
 
 const router = require('express').Router();
 
 // POST domain:/api/client/kit/search -> Get all items
+
+// // POST domain:/api/kit/search -> Get all items
 router.post('/kit/search',
-    authMiddleWare([], true),
-    validationMiddleware(),
-    clientController.getKit);
+    validationMiddleware(validateSearchKit),
+    kitController.getKits,
+);
+
+// GET domain:/api/kit/:id -> Get item by id
+router.get(`/kit/:id`, kitController.getKit);
+// POST domain:/api/kit/search -> Get all items
+router.post('/lab/search',
+    validationMiddleware(validateSearchLab),
+    labController.getLabs,
+);
+
+// GET domain:/api/lab/:id -> Get item by id
+router.get(`/lab/:id`, labController.getLab);
 
 // GET domain:/api/client/kit/:id -> Get kit detail by id
 // router.get(`/kit/:id`,

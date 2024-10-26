@@ -32,7 +32,7 @@ const kitController = {
                 return res.status(HttpStatus.Success).json(JSON.parse(cacheKit));
             }
             const kit = await kitService.getKit(req.params.id);
-            await redisClient.setEx(`kit:${kitId}`, 3600, JSON.stringify(kit));
+            await redisClient.setEx(`kit:${kitId}`, 360, JSON.stringify(kit));
             res.status(HttpStatus.Success).json(formatResponse(kit));
         } catch (error) {
             next(error);

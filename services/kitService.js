@@ -102,7 +102,8 @@ const kitService = {
         if (!detail) {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);
         }
-        return detail;
+        console.log(detail[0])
+        return detail[0];
     },
 
     changeStatusKit: async (model, user) => {

@@ -25,13 +25,13 @@ const categoryController = {
     getCategory: async (req, res, next) => {
         try {
             const categoryId = req.params.id;
-            const cachedCategory = await redisClient.get(`category:${categoryId}`);
+            // const cachedCategory = await redisClient.get(`category:${categoryId}`);
 
-            if (cachedCategory) {
-                return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedCategory)));
-            }
+            // if (cachedCategory) {
+            //     return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedCategory)));
+            // }
             const category = await categoryService.getCategory(req.params.id);
-            await redisClient.setEx(`category:${categoryId}`, 3600, JSON.stringify(category));
+            // await redisClient.setEx(`category:${categoryId}`, 3600, JSON.stringify(category));
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -42,7 +42,7 @@ const categoryController = {
             const model = req.body;
             const categoryId = req.params.id
             const category = await categoryService.updateCategory(categoryId, model);
-            await redisClient.del(`category:${categoryId}`);
+            // await redisClient.del(`category:${categoryId}`);
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {
             next(error);
@@ -52,7 +52,7 @@ const categoryController = {
         try {
             const categoryId = req.params.id;
             await categoryService.deleteCategory(categoryId);
-            redisClient.del(`category:${categoryId}`);
+            // redisClient.del(`category:${categoryId}`);
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);

@@ -27,12 +27,12 @@ const kitController = {
     getKit: async (req, res, next) => {
         try {
             const kitId = req.params.id;
-            const cacheKit = await redisClient.get(`kit:${kitId}`);
-            if (cacheKit) {
-                return res.status(HttpStatus.Success).json(JSON.parse(cacheKit));
-            }
+            // const cacheKit = await redisClient.get(`kit:${kitId}`);
+            // if (cacheKit) {
+            //     return res.status(HttpStatus.Success).json(JSON.parse(cacheKit));
+            // }
             const kit = await kitService.getKit(req.params.id);
-            await redisClient.setEx(`kit:${kitId}`, 360, JSON.stringify(kit));
+            // await redisClient.setEx(`kit:${kitId}`, 360, JSON.stringify(kit));
             res.status(HttpStatus.Success).json(formatResponse(kit));
         } catch (error) {
             next(error);
@@ -44,7 +44,7 @@ const kitController = {
             const model = req.body;
             const kitId = req.body.kit_id;
             const item = await kitService.changeStatusKit(model, req.user);
-            await redisClient.del(`kit:${kitId}`);
+            // await redisClient.del(`kit:${kitId}`);
             res.status(HttpStatus.Success).json(formatResponse(item));
         } catch (error) {
             next(error);
@@ -56,7 +56,7 @@ const kitController = {
             const model = req.body;
             const kitId = req.params.id;
             const kit = await kitService.updateKit(kitId, model, req.user.id);
-            await redisClient.del(`kit:${kitId}`);
+            // await redisClient.del(`kit:${kitId}`);
             res.status(HttpStatus.Success).json(formatResponse(kit));
         } catch (error) {
             next(error)
@@ -67,7 +67,7 @@ const kitController = {
         try {
             const kitId = req.params.id;
             await kitService.deleteKit(kitId, req.user.id);
-            await redisClient.del(`kit:${kitId}`);
+            // await redisClient.del(`kit:${kitId}`);
             res.status(HttpStatus.Success).json(formatResponse(null));
         } catch (error) {
             next(error);

@@ -1,4 +1,4 @@
-const Review = require('./ReviewSchema');
+const Review = require('./Review');
 
 module.exports = {
     Review

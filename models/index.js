@@ -16,6 +16,12 @@ const { KitLog, validateCreateKitLog, validateSearchKitLog } = require('./kitLog
 //Lab Schema 
 const { Lab, validateCreateLab, validateAddSupporters, validateUpdateLab, validateSearchLab } = require('./lab');
 
+//Combo Schema 
+const { Combo, validateCreateCombo, validateSearchCombo } = require('./combo')
+
+//Review Schema 
+const { Review } = require('./review')
+
 module.exports = {
     User,
     validateChangePassword,
@@ -44,5 +50,9 @@ module.exports = {
     validateCreateLab,
     validateAddSupporters,
     validateUpdateLab,
-    validateSearchLab
+    validateSearchLab,
+    Combo,
+    validateCreateCombo,
+    validateSearchCombo,
+    Review
 }

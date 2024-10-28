@@ -6,6 +6,8 @@ const kitService = require('./kitService');
 const kitLogService = require('./kitLogService');
 const labService = require('./labService');
 const clientService = require('./clientService');
+const comboService = require('./comboService');
+const reviewService = require('./reviewService');
 
 module.exports = {
     authService,
@@ -15,5 +17,7 @@ module.exports = {
     kitService,
     kitLogService,
     labService,
-    clientService
+    clientService,
+    comboService,
+    reviewService
 }

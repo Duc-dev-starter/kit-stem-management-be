@@ -52,7 +52,7 @@ router.get(`/blog/:id`,
 router.post('/combo/search', validationMiddleware(validateSearchCombo), comboController.getCombos);
 
 router.get(
-    '/:id',
+    '/combo/:id',
     comboController.getCombo,
 );
 

@@ -1,6 +1,6 @@
-const { categoryController, blogController, clientController, labController, kitController } = require('../controllers');
+const { categoryController, blogController, clientController, labController, kitController, comboController } = require('../controllers');
 const { authMiddleWare, validationMiddleware } = require('../middleware');
-const { validateSearchCategory, validateSearchBlog, validateSearchLab, validateSearchKit } = require('../models');
+const { validateSearchCategory, validateSearchBlog, validateSearchLab, validateSearchKit, validateSearchCombo } = require('../models');
 
 const router = require('express').Router();
 
@@ -48,6 +48,8 @@ router.get(`/blog/:id`,
     authMiddleWare([], true),
     blogController.getBlog,
 );
+
+router.post('/combo/search', validationMiddleware(validateSearchCombo), comboController.getCombos);
 
 
 module.exports = router;

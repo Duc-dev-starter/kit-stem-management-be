@@ -1,6 +1,6 @@
-const { HttpStatus } = require("../consts");
+const { HttpStatus, UserRoleEnum } = require("../consts");
 const HttpException = require("../exception");
-const { isEmptyObject } = require("../utils");
+const { isEmptyObject, checkUserMatch } = require("../utils");
 const { kitRepository, labRepository, comboRepository, reviewRepository } = require("../repository");
 
 const reviewService = {
@@ -60,6 +60,82 @@ const reviewService = {
         return count > 0; // Trả về `true` nếu đã có review trước đó
     },
 
+
+    getReviewById: async (id) => {
+        const review = await reviewRepository.findReviewById(id);
+        if (!review) {
+            throw new HttpException(HttpStatus.BadRequest, `Review is not exists.`);
+        }
+        return review;
+    },
+
+    updateReview: async (id, model, user) => {
+        const userId = user.id;
+        const userRole = user.role;
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
+
+        model.user_id = userId;
+        let errorResults = [];
+
+        console.log('test')
+        // check item exits
+        const item = await reviewService.getReviewById(id);
+        if (item && item.user_id) {
+            if (userRole === UserRoleEnum.CUSTOMER) {
+                // check valid user
+                checkUserMatch(userId, item.user_id.toString(), 'review');
+            }
+        }
+
+        await reviewService.checkProductValid(model);
+
+        // check valid
+        if (errorResults.length) {
+            throw new HttpException(HttpStatus.BadRequest, '', errorResults);
+        }
+
+        const updateData = {
+            rating: model.rating,
+            comment: model.comment,
+            updated_at: new Date(),
+        };
+
+        const updatedItem = await reviewRepository.updateReview(id, updateData)
+
+        if (!updatedItem.acknowledged) {
+            throw new HttpException(HttpStatus.BadRequest, 'Update item info failed!');
+        }
+
+        const result = await reviewService.getReviewById(id);
+        return result;
+
+    },
+
+    deleteReview: async (id, user) => {
+        const review = await reviewService.getReviewById(id);
+        const userId = user.id;
+        const userRole = user.role;
+        if (!review || review.is_deleted) {
+            throw new HttpException(HttpStatus.BadRequest, `Review is not exists.`);
+        }
+
+        if (review && review.user_id) {
+            if (userRole === UserRoleEnum.CUSTOMER) {
+                // check valid user
+                checkUserMatch(userId, review.user_id.toString(), 'review');
+            }
+        }
+
+        const updatedReview = await reviewRepository.deleteReview(id)
+
+        if (!updatedReview.acknowledged) {
+            throw new HttpException(HttpStatus.BadRequest, 'Delete item failed!');
+        }
+
+        return true;
+    }
 
 };
 

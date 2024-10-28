@@ -23,12 +23,6 @@ router.post('/lab/search',
 // GET domain:/api/lab/:id -> Get item by id
 router.get(`/lab/:id`, labController.getLab);
 
-// GET domain:/api/client/kit/:id -> Get kit detail by id
-// router.get(`/kit/:id`,
-//     authMiddleWare([], true),
-//     clientController.getKitDetail,
-// );
-
 // POST domain:/api/client/category/search -> Get all category
 router.post('/category/search',
     authMiddleWare([], true),

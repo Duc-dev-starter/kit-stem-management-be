@@ -20,7 +20,7 @@ const { Lab, validateCreateLab, validateAddSupporters, validateUpdateLab, valida
 const { Combo, validateCreateCombo, validateSearchCombo } = require('./combo')
 
 //Review Schema 
-const { Review, validateCreateReview } = require('./review')
+const { Review, validateCreateReview, validateUpdateReview } = require('./review')
 
 module.exports = {
     User,
@@ -56,5 +56,5 @@ module.exports = {
     validateSearchCombo,
     Review,
     validateCreateReview,
-
+    validateUpdateReview
 }

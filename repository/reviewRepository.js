@@ -18,6 +18,21 @@ const reviewRepository = {
         });
     },
 
+    findReviewById: async (id) => {
+        return await Review.findOne({ _id: id, is_deleted: false }).lean();
+    },
+
+    deleteReview: async (id) => {
+        return await Review.updateOne(
+            { _id: id },
+            { is_deleted: true, updated_at: new Date() },
+        );
+    },
+
+    updateReview: async (id, updateData) => {
+        return await Review.updateOne({ _id: id }, updateData);
+    },
+
 }
 
 module.exports = reviewRepository; 

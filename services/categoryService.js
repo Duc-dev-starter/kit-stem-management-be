@@ -86,10 +86,10 @@ const categoryService = {
     },
     getCategory: async (id) => {
         const category = await categoryRepository.findCategoryWithUser(id);
-        if (!category) {
+        if (!category || category.length === 0) {
             throw new HttpException(HttpStatus.BadRequest, `Category is not exists.`);
         }
-        return category;
+        return category[0];
     },
     updateCategory: async (id, model) => {
         if (isEmptyObject(model)) {

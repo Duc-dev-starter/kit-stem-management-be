@@ -146,6 +146,25 @@ const kitRepository = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'reviews',
+                        let: { kitId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$product_id', '$$kitId'] },
+                                            { $eq: ['$product_type', 'kit'] },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'reviews',
+                    },
+                },
+                {
                     $project: {
                         _id: 1,
                         user_id: 1,
@@ -160,6 +179,7 @@ const kitRepository = {
                         discount: 1,
                         lab_count: { $ifNull: [{ $arrayElemAt: ['$labs.labCount', 0] }, 0] },
                         labs: { $ifNull: [{ $arrayElemAt: ['$labs.labs', 0] }, []] },
+                        reviews: 1, // Thêm mảng reviews vào kết quả
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,
@@ -173,6 +193,7 @@ const kitRepository = {
             return;
         }
     },
+
 
     findKitById: async (id) => {
         return await Kit.findOne({ _id: id, is_deleted: false }).lean();

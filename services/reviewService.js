@@ -10,13 +10,24 @@ const reviewService = {
         }
 
         model.user_id = userId;
-        console.log(userId)
+        if (model.comment) {
+            const trimmedComment = model.comment.trim().replace(/\s+/g, ' ');
+            if (trimmedComment === '' || /\s{2,}/.test(model.comment)) {
+                throw new HttpException(HttpStatus.BadRequest, 'Comment cannot contain only spaces or have excessive whitespace');
+            }
+        } else {
+            throw new HttpException(HttpStatus.BadRequest, 'Comment is required');
+        }
         // Kiểm tra tính hợp lệ của product (kit, lab, combo)
         const isValidProduct = await reviewService.checkProductValid(model);
         if (!isValidProduct) {
             throw new HttpException(HttpStatus.BadRequest, 'Product is not valid');
         }
-        console.log(isValidProduct);
+
+        const hasReviewed = await reviewService.hasUserReviewedProduct(model.product_id, model.product_type, userId);
+        if (hasReviewed) {
+            throw new HttpException(HttpStatus.Conflict, 'User has already reviewed this product');
+        }
         // Xử lý tạo review tại đây (ví dụ lưu vào database)
         // const review = await Review.create(model);
         // return review;
@@ -42,6 +53,14 @@ const reviewService = {
 
         return product !== null; // Trả về `true` nếu tìm thấy sản phẩm hợp lệ
     },
+
+    hasUserReviewedProduct: async (productId, productType, userId) => {
+        // Kiểm tra trong repository xem user đã review chưa
+        const count = await reviewRepository.countReviewsByUserAndProduct(userId, productId, productType);
+        return count > 0; // Trả về `true` nếu đã có review trước đó
+    },
+
+
 };
 
 module.exports = reviewService;

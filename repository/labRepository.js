@@ -140,6 +140,25 @@ const labRepository = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'reviews',
+                        let: { labId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$product_id', '$$labId'] },
+                                            { $eq: ['$product_type', 'lab'] },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'reviews',
+                    },
+                },
+                {
                     $project: {
                         _id: 1,
                         name: 1,
@@ -158,6 +177,7 @@ const labRepository = {
                             _id: 1,
                             name: 1,
                         },
+                        reviews: 1, // Thêm mảng reviews vào kết quả
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,
@@ -166,11 +186,11 @@ const labRepository = {
                 { $limit: 1 },
             ]).exec();
 
-
         } catch (error) {
             console.log(error);
         }
     },
+
 
     findLabById: async (id) => {
         return await Lab.findOne({ _id: id, is_deleted: false }).lean();

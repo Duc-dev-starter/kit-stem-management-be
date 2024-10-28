@@ -15,4 +15,10 @@ router.post(
 
 router.post('/search', authMiddleWare([UserRoleEnum.MANAGER]), validationMiddleware(validateSearchCombo), comboController.getCombos);
 
+router.get(
+    '/:id',
+    authMiddleWare([UserRoleEnum.MANAGER]),
+    comboController.getCombo,
+);
+
 module.exports = router

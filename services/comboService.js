@@ -58,8 +58,12 @@ const comboService = {
         return newCombo;
     },
 
-    getComboById: async (id) => {
-        return await comboRepository.findComboById(id);
+    getCombo: async (id) => {
+        const combo = await comboRepository.findComboWithUserAndCategory(id);
+        if (!combo || combo.length === 0) {
+            throw new HttpException(HttpStatus.BadRequest, `Combo is not exists.`);
+        }
+        return combo[0];
     },
 
     getCombos: async (model) => {

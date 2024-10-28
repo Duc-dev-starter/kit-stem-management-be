@@ -22,6 +22,16 @@ const comboController = {
             next(error);
         }
     },
+
+    getCombo: async (req, res, next) => {
+        try {
+            const comboId = req.params.id;
+            const combo = await comboService.getCombo(comboId);
+            res.status(HttpStatus.Success).json(formatResponse(combo));
+        } catch (error) {
+            next(error);
+        }
+    },
 }
 
 module.exports = comboController;

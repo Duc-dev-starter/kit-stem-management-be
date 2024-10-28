@@ -30,7 +30,7 @@ const categoryController = {
             // if (cachedCategory) {
             //     return res.status(HttpStatus.Success).json(formatResponse(JSON.parse(cachedCategory)));
             // }
-            const category = await categoryService.getCategory(req.params.id);
+            const category = await categoryService.getCategory(categoryId);
             // await redisClient.setEx(`category:${categoryId}`, 3600, JSON.stringify(category));
             res.status(HttpStatus.Success).json(formatResponse(category));
         } catch (error) {

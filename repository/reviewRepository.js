@@ -8,7 +8,16 @@ const reviewRepository = {
             console.log(error);
             return;
         }
-    }
+    },
+
+    countReviewsByUserAndProduct: async (userId, productId, productType) => {
+        return await Review.countDocuments({
+            user_id: userId,
+            product_id: productId,
+            product_type: productType,
+        });
+    },
+
 }
 
 module.exports = reviewRepository; 

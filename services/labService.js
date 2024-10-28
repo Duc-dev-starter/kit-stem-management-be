@@ -198,11 +198,11 @@ const labService = {
     },
 
     getLab: async (id) => {
-        const detail = await labRepository.findLabWithUserAndCategoryAndSupporter(id);
-        if (!detail) {
+        const lab = await labRepository.findLabWithUserAndCategoryAndSupporter(id);
+        if (!lab || lab.length === 0) {
             throw new HttpException(HttpStatus.BadRequest, `Lab is not exists.`);
         }
-        return detail[0];
+        return lab[0];
     },
 
     updateLab: async (id, model, userId) => {

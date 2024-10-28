@@ -126,7 +126,7 @@ const userService = {
 
         return formatPaginationData(users, pageNum, pageSize, totalItems);
     },
-    getUserById: async (userId, is_deletedPassword, userData) => {
+    getUserById: async (userId, is_deletedPassword) => {
         if (!mongoose.isValidObjectId(userId)) {
             throw new HttpException(HttpStatus.BadRequest, `Invalid User ID format.`);
         }

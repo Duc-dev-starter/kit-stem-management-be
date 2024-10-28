@@ -98,12 +98,11 @@ const kitService = {
     },
 
     getKit: async (id) => {
-        const detail = await kitRepository.findKitWithUserAndCategoryAndLabs(id);
-        if (!detail) {
+        const kit = await kitRepository.findKitWithUserAndCategoryAndLabs(id);
+        if (!kit || kit.length === 0) {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);
         }
-        console.log(detail[0])
-        return detail[0];
+        return kit[0];
     },
 
     changeStatusKit: async (model, user) => {

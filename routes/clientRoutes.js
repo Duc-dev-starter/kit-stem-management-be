@@ -51,5 +51,9 @@ router.get(`/blog/:id`,
 
 router.post('/combo/search', validationMiddleware(validateSearchCombo), comboController.getCombos);
 
+router.get(
+    '/:id',
+    comboController.getCombo,
+);
 
 module.exports = router;

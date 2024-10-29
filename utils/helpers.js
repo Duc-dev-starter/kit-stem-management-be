@@ -1,4 +1,11 @@
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const { DATE_FORMAT } = require('../consts');
+let nanoid;
+(async () => {
+    const { nanoid: importedNanoid } = await import('nanoid');
+    nanoid = importedNanoid;
+})();
 const getUserIdCurrent = (authHeader) => {
     if (!authHeader) {
         return '';
@@ -41,10 +48,15 @@ const isModelInvalid = (model, requiredFields) => {
     return missingFields.length > 0 ? missingFields : null; // Trả về danh sách các trường thiếu
 };
 
-
+const generateRandomNo = (PREFIX_TITLE, numberLimit = 6) => {
+    const uniqueId = String(nanoid(numberLimit)).toUpperCase(); // Generate a unique NO with numberLimit characters
+    const yyyymmdd = moment().format(DATE_FORMAT.YYYYMMDD); // Format current date as YYYYMMDD
+    return `${PREFIX_TITLE}_${uniqueId}${yyyymmdd}`;
+};
 
 module.exports = {
     getUserIdCurrent,
     isEmptyObject,
     isModelInvalid,
+    generateRandomNo,
 }

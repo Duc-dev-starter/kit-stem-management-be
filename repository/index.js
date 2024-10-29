@@ -7,6 +7,7 @@ const kitLogRepository = require('./kitLogRepository');
 const labRepository = require('./labRepository');
 const comboRepository = require('./comboRepository');
 const reviewRepository = require('./reviewRepository');
+const cartRepository = require('./cartRepository');
 
 module.exports = {
     userRepository,
@@ -18,5 +19,5 @@ module.exports = {
     labRepository,
     comboRepository,
     reviewRepository,
-
+    cartRepository
 }

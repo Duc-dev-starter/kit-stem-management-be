@@ -1,58 +1,36 @@
 const mongoose = require('mongoose');
+const { CartStatusEnum, COLLECTION_NAME } = require('../../consts');
 
-const createCartSchema = new mongoose.Schema({
-    kit_id: {
+const cartSchema = new mongoose.Schema({
+    cart_no: { type: String, default: '' },
+    status: {
         type: String,
-        default: ''
+        enum: CartStatusEnum,
+        default: CartStatusEnum.NEW,
+        required: true,
     },
-    lab_id: {
-        type: String,
-        default: ''
-    },
-    is_combo: {
-        type: Boolean,
-        default: false
-    },
-    price: {
-        type: Number,
+    price_paid: { type: Number },
+    price: { type: Number },
+    discount: { type: Number, default: 0 },
+    product_id: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    discount: {
-        type: Number,
-        default: 0
-    },
-    user_id: {
+    product_type: {
         type: String,
+        enum: ['kit', 'lab', 'combo'],
         required: true
     },
-    created_at: {
-        type: Date,
-        default: new Date()
-    },
-    updated_at: {
-        type: Date,
-        default: new Date()
-    },
-    is_deleted: {
-        type: Boolean,
-        default: false
-    }
-});
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.USER },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now },
+    is_deleted: { type: Boolean, default: false },
+})
 
 // Hàm kiểm tra dữ liệu đầu vào
 const validateCreateCart = (data) => {
-    // Kiểm tra điều kiện bắt buộc cho `kit_id` hoặc `lab_id`
-    if (!data.kit_id && !data.lab_id) {
-        return Promise.reject(new Error('Yêu cầu truyền ít nhất một trong hai giá trị: kit_id hoặc lab_id'));
-    }
 
-    // Nếu là combo thì cả kit_id và lab_id đều phải có giá trị
-    if (data.is_combo && (!data.kit_id || !data.lab_id)) {
-        return Promise.reject(new Error('Combo yêu cầu cả kit_id và lab_id'));
-    }
-
-    // Nếu điều kiện thỏa mãn, thực hiện validate với Mongoose
-    const instance = new mongoose.Document(data, createCartSchema);
+    const instance = new mongoose.Document(data, cartSchema);
     return instance.validate();
 };
 

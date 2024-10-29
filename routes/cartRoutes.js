@@ -1,16 +1,17 @@
 const { UserRoleEnum } = require('../consts');
-const { blogController } = require('../controllers');
+const { blogController, cartController } = require('../controllers');
 const { validationMiddleware, authMiddleWare } = require('../middleware');
 const { validateCreateBlog, validateSearchBlog, validateUpdateBlog } = require('../models');
+const { validateCreateCart } = require('../models/cart');
 
 const router = require('express').Router();
 
 // POST domain:/api/cart/create -> Create new item
 router.post(
     '/create',
-    authMiddleWare([UserRoleEnum.MANAGER]),
-    validationMiddleware(validateCreateBlog),
-    blogController.create,
+    authMiddleWare([UserRoleEnum.CUSTOMER]),
+    validationMiddleware(validateCreateCart),
+    cartController.create,
 );
 
 // POST domain:/api/blog/search -> Get all items

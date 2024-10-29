@@ -2,7 +2,7 @@ const logger = require('./logger');
 const sendMail = require('./sendMail');
 const { encodePasswordUserNormal, generateRandomPassword, createCacheKey } = require('./hashPassword');
 const { createToken, createTokenVerifiedUser } = require('./token');
-const { getUserIdCurrent, isEmptyObject, isModelInvalid } = require('./helpers');
+const { getUserIdCurrent, isEmptyObject, isModelInvalid, generateRandomNo } = require('./helpers');
 const { checkUserMatch, checkValidUrl, } = require('./validation');
 const { formatPaginationData, formatResponse } = require('./formatResponse');
 const itemsQuery = require('./query');
@@ -22,5 +22,6 @@ module.exports = {
     formatPaginationData,
     itemsQuery,
     createCacheKey,
-    isModelInvalid
+    isModelInvalid,
+    generateRandomNo,
 }

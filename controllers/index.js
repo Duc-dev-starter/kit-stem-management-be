@@ -8,6 +8,7 @@ const labController = require('./labController');
 const clientController = require('./clientController');
 const comboController = require('./comboController');
 const reviewController = require('./reviewController');
+const cartController = require('./cartController');
 
 module.exports = {
     authController,
@@ -20,4 +21,5 @@ module.exports = {
     clientController,
     comboController,
     reviewController,
+    cartController,
 }

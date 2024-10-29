@@ -8,6 +8,7 @@ const labService = require('./labService');
 const clientService = require('./clientService');
 const comboService = require('./comboService');
 const reviewService = require('./reviewService');
+const cartService = require('./cartService');
 
 module.exports = {
     authService,
@@ -19,5 +20,7 @@ module.exports = {
     labService,
     clientService,
     comboService,
-    reviewService
+    reviewService,
+    cartService,
+
 }

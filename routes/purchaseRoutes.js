@@ -19,8 +19,16 @@ router.post(
     purchaseController.getPurchases,
 );
 
+// POST domain:/api/purchase/search-for-instructor -> Get all items for subscriber
+router.post(
+    '/delivery',
+    authMiddleWare([UserRoleEnum.STAFF]),
+    validationMiddleware(validateSearchPurchase),
+    purchaseController.getPurchases,
+);
+
 router.put(
-    `/update-status/:id`,
+    `/update-status`,
     authMiddleWare([UserRoleEnum.MANAGER, UserRoleEnum.STAFF, UserRoleEnum.CUSTOMER]),
     purchaseController.updatePurchaseStatus,
 );

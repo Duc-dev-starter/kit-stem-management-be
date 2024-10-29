@@ -58,7 +58,7 @@ const labSchema = new mongoose.Schema({
     is_deleted: { type: Boolean, default: false },
     support_histories: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: COLLECTION_NAME.SUPPORT_HISTORY,
+        ref: COLLECTION_NAME.SUPPORT,
         default: []
     }]
 })

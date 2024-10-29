@@ -22,6 +22,7 @@ const purchaseSchema = new mongoose.Schema({
         enum: ['kit', 'lab', 'combo'],
         required: true
     },
+    staff_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.USER }, // ID của staff được gán
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.USER, required: true },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },

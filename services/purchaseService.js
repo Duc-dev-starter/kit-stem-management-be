@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const { UserRoleEnum, HttpStatus, PurchaseStatusEnum, PURCHASE_STATUS_CHANGE_PAIRS } = require("../consts");
-const { itemsQuery, formatPaginationData } = require("../utils");
+const { itemsQuery, formatPaginationData, isEmptyObject } = require("../utils");
 const { Purchase } = require("../models");
 const HttpException = require("../exception");
 
@@ -8,7 +8,7 @@ const purchaseService = {
     getPurchases: async (model, user) => {
         const userId = user.id;
         const { searchCondition, pageInfo } = model;
-        const { purchase_no, cart_no, product_id, product_type, status, is_deleted } = searchCondition;
+        const { purchase_no, cart_no, product_id, product_type, status, is_deleted, staff_id } = searchCondition;
         const { pageNum, pageSize } = pageInfo;
 
         let query = {};
@@ -28,6 +28,8 @@ const purchaseService = {
                 cart_no: { $regex: keywordValue, $options: 'i' },
             };
         }
+        console.log(staff_id);
+
 
         if (product_id) {
             const keywordValue = product_id.toLowerCase().trim();
@@ -45,11 +47,17 @@ const purchaseService = {
             };
         }
 
-        if (user.role !== UserRoleEnum.ADMIN) {
+        if (user.role === UserRoleEnum.CUSTOMER) {
             const userIdObj = new mongoose.Types.ObjectId(userId);
             query = {
                 ...query,
                 user_id: userIdObj,
+            };
+        } else if (user.role === UserRoleEnum.STAFF) {
+            const staffIdObj = new mongoose.Types.ObjectId(staff_id)
+            query = {
+                ...query,
+                staff_id: staffIdObj,
             };
         }
 
@@ -160,58 +168,74 @@ const purchaseService = {
         return formatPaginationData(purchases, pageNum, pageSize, rowCount);
     },
 
-    updatePurchaseStatus: async (purchaseId, model, user) => {
-        if (isEmptyObject(model)) {
-            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
-        }
-        const purchaseExists = await Purchase.findById(purchaseId);
-
-        if (!purchaseExists) {
-            throw new HttpException(HttpStatus.NotFound, 'Purchase not found');
+    updatePurchaseStatus: async (model, user) => {
+        if (isEmptyObject(model) || !Array.isArray(model.purchase_ids) || model.purchase_ids.length === 0) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty or purchase_ids is invalid');
         }
 
-        if (purchaseExists.status === PurchaseStatusEnum.COMPLETED) {
-            throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' already completed!`);
-        }
+        // Lặp qua từng purchase_id để cập nhật trạng thái
+        for (const purchaseId of model.purchase_ids) {
+            const purchaseExists = await Purchase.findById(purchaseId);
+            if (!purchaseExists) {
+                throw new HttpException(HttpStatus.NotFound, `Purchase '${purchaseId}' not found`);
+            }
 
-        const isValidChangeStatus = PURCHASE_STATUS_CHANGE_PAIRS.some(
-            (pair) => pair[0] === purchaseExists.status && pair[1] === model.status,
-        );
+            if (purchaseExists.status === PurchaseStatusEnum.COMPLETED) {
+                throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' already completed!`);
+            }
 
-        if (!isValidChangeStatus) {
-            throw new HttpException(
-                HttpStatus.BadRequest,
-                `Invalid status change. Current purchase item '${purchaseExists.purchase_no}' cannot update status: ${purchaseExists.status} -> ${model.status}`,
+            const isValidChangeStatus = PURCHASE_STATUS_CHANGE_PAIRS.some(
+                (pair) => pair[0] === purchaseExists.status && pair[1] === model.status,
             );
+
+            if (!isValidChangeStatus) {
+                throw new HttpException(
+                    HttpStatus.BadRequest,
+                    `Invalid status change. Current purchase item '${purchaseExists.purchase_no}' cannot update status: ${purchaseExists.status} -> ${model.status}`,
+                );
+            }
+
+            // Cập nhật trạng thái và gán staff_id cho từng purchase
+            switch (user.role) {
+                case 'manager':
+                    if (purchaseExists.status === PurchaseStatusEnum.NEW) {
+                        purchaseExists.status = PurchaseStatusEnum.PROCESSING; // Chuyển trạng thái
+                        purchaseExists.staff_id = model.staff_id; // Gán staff_id từ model vào purchase
+                        purchaseExists.assigned_at = Date.now(); // Thời gian gán
+                    } else {
+                        throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' cannot be processed. Manager can only change from new to processing`);
+                    }
+                    break;
+
+                case 'staff':
+                    console.log('test')
+                    if (purchaseExists.status === PurchaseStatusEnum.PROCESSING) {
+                        purchaseExists.status = PurchaseStatusEnum.DELIVERING;
+                    } else {
+                        throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' cannot be delivered. Staff can only change from processing to delivering`);
+                    }
+                    break;
+
+                case 'customer':
+                    if (purchaseExists.status === PurchaseStatusEnum.DELIVERING) {
+                        purchaseExists.status = PurchaseStatusEnum.DELIVERED;
+                    } else {
+                        throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' cannot be marked as delivered. Client can only change from delivering to delivered`);
+                    }
+                    break;
+
+                default:
+                    throw new HttpException(HttpStatus.BadRequest, 'Invalid role or status');
+            }
+
+            await purchaseExists.save(); // Lưu từng purchase sau khi cập nhật
         }
 
-        switch (role) {
-            case 'manager':
-                if (purchaseExists.status === PurchaseStatusEnum.NEW) {
-                    purchaseExists.status = PurchaseStatusEnum.PROCESSING; // Chuyển đến staff
-                }
-                break;
+        return true;
+    },
 
-            case 'staff':
-                if (purchaseExists.status === PurchaseStatusEnum.PROCESSING) {
-                    purchaseExists.status = PurchaseStatusEnum.DELIVERING;
-                }
-                break;
 
-            case 'client':
-                if (purchaseExists.status === PurchaseStatusEnum.DELIVERING) {
-                    purchaseExists.status = PurchaseStatusEnum.DELIVERED;
-                }
-                break;
 
-            default:
-                throw new HttpException(HttpStatus.BadRequest, 'Invalid role or status');
-        }
-
-        await purchaseExists.save();
-
-        return { message: `Purchase status updated to ${purchaseExists.status}` };
-    }
 
 
 }

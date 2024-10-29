@@ -9,6 +9,8 @@ const searchPurchaseSchema = new mongoose.Schema({
         default: PurchaseStatusEnum.NEW,
     },
     cart_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.CART },
+    staff_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.USER },
+
     product_id: {
         type: mongoose.Schema.Types.ObjectId,
     },

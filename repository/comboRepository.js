@@ -38,7 +38,6 @@ const comboRepository = {
 
     findComboWithUserAndCategory: async (id) => {
         try {
-
             const combo = await Combo.aggregate([
                 {
                     $match: {
@@ -48,7 +47,7 @@ const comboRepository = {
                 },
                 {
                     $lookup: {
-                        from: 'users',  // Lookup user details for each combo
+                        from: 'users',
                         localField: 'user_id',
                         foreignField: '_id',
                         as: 'userDetails',
@@ -56,13 +55,13 @@ const comboRepository = {
                 },
                 {
                     $unwind: {
-                        path: '$userDetails',  // Unwind userDetails to simplify access
-                        preserveNullAndEmptyArrays: true, // Handle cases with no user
+                        path: '$userDetails',
+                        preserveNullAndEmptyArrays: true,
                     },
                 },
                 {
                     $lookup: {
-                        from: 'categories',  // Lookup category details
+                        from: 'categories',
                         localField: 'category_id',
                         foreignField: '_id',
                         as: 'categoryDetails',
@@ -70,8 +69,8 @@ const comboRepository = {
                 },
                 {
                     $unwind: {
-                        path: '$categoryDetails',  // Unwind categoryDetails
-                        preserveNullAndEmptyArrays: true, // Handle cases with no category
+                        path: '$categoryDetails',
+                        preserveNullAndEmptyArrays: true,
                     },
                 },
                 {
@@ -94,6 +93,22 @@ const comboRepository = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: 'kits',
+                        localField: 'items.itemId',
+                        foreignField: '_id',
+                        as: 'kitDetails',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'labs',
+                        localField: 'items.itemId',
+                        foreignField: '_id',
+                        as: 'labDetails',
+                    },
+                },
+                {
                     $project: {
                         _id: 1,
                         name: 1,
@@ -106,16 +121,21 @@ const comboRepository = {
                         category_name: '$categoryDetails.name',
                         user_id: '$user_id',
                         user_name: '$userDetails.name',
-                        items: 1,  // Assuming you want to return the items field as well
+                        kits: {
+                            $arrayElemAt: ['$kitDetails', 0]  // Lấy phần tử đầu tiên trong mảng kits
+                        },
+                        labs: {
+                            $arrayElemAt: ['$labDetails', 0]  // Lấy phần tử đầu tiên trong mảng labs
+                        },
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,
                     },
                 },
                 { $limit: 1 },
-
             ]).exec();
-            console.log(combo)
+
+            console.log(combo);
             return combo;
 
         } catch (error) {
@@ -123,6 +143,8 @@ const comboRepository = {
             throw new Error(`Error finding combos with pagination: ${error.message}`);
         }
     },
+
+
 
 
     countCombos: async (query) => {

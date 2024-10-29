@@ -7,7 +7,7 @@ const { LabStatus, LabStatusEnum, REQUIRED_COMMENT_LAB_STATUSES, VALID_STATUS_LA
 const { CART_STATUS_CHANGE_PAIRS, CartStatusEnum } = require('./cartStatus')
 const PREFIX_TITLE = require('./prefix')
 const DATE_FORMAT = require('./date')
-const PurchaseStatusEnum = require('./purchaseStatus')
+const { PURCHASE_STATUS_CHANGE_PAIRS, PurchaseStatusEnum } = require('./purchaseStatus')
 module.exports = {
     HttpStatus,
     API_PATH,
@@ -27,5 +27,6 @@ module.exports = {
     PREFIX_TITLE,
     DATE_FORMAT,
     CART_STATUS_CHANGE_PAIRS,
-    PurchaseStatusEnum
+    PurchaseStatusEnum,
+    PURCHASE_STATUS_CHANGE_PAIRS
 }

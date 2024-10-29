@@ -19,5 +19,11 @@ router.post(
     purchaseController.getPurchases,
 );
 
+router.put(
+    `/update-status/:id`,
+    authMiddleWare([UserRoleEnum.MANAGER, UserRoleEnum.STAFF, UserRoleEnum.CUSTOMER]),
+    purchaseController.updatePurchaseStatus,
+);
+
 
 module.exports = router;

@@ -14,6 +14,16 @@ const purchaseController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    updatePurchaseStatus: async (req, res, next) => {
+        try {
+            const model = req.body;
+            await purchaseService.updatePurchaseStatus(req.params.id, model, req.user);
+            res.status(HttpStatus.Success).json(formatResponse(null));
+        } catch (error) {
+            next(error);
+        }
     }
 }
 

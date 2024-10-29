@@ -1,7 +1,8 @@
 const { default: mongoose } = require("mongoose");
-const { UserRoleEnum } = require("../consts");
+const { UserRoleEnum, HttpStatus, PurchaseStatusEnum, PURCHASE_STATUS_CHANGE_PAIRS } = require("../consts");
 const { itemsQuery, formatPaginationData } = require("../utils");
 const { Purchase } = require("../models");
+const HttpException = require("../exception");
 
 const purchaseService = {
     getPurchases: async (model, user) => {
@@ -25,6 +26,22 @@ const purchaseService = {
             query = {
                 ...query,
                 cart_no: { $regex: keywordValue, $options: 'i' },
+            };
+        }
+
+        if (product_id) {
+            const keywordValue = product_id.toLowerCase().trim();
+            query = {
+                ...query,
+                product_id: { $regex: keywordValue, $options: 'i' },
+            };
+        }
+
+        if (product_type) {
+            const keywordValue = product_type.toLowerCase().trim();
+            query = {
+                ...query,
+                product_type: { $regex: keywordValue, $options: 'i' },
             };
         }
 
@@ -143,7 +160,58 @@ const purchaseService = {
         return formatPaginationData(purchases, pageNum, pageSize, rowCount);
     },
 
+    updatePurchaseStatus: async (purchaseId, model, user) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
+        const purchaseExists = await Purchase.findById(purchaseId);
 
+        if (!purchaseExists) {
+            throw new HttpException(HttpStatus.NotFound, 'Purchase not found');
+        }
+
+        if (purchaseExists.status === PurchaseStatusEnum.COMPLETED) {
+            throw new HttpException(HttpStatus.BadRequest, `Purchase '${purchaseExists.purchase_no}' already completed!`);
+        }
+
+        const isValidChangeStatus = PURCHASE_STATUS_CHANGE_PAIRS.some(
+            (pair) => pair[0] === purchaseExists.status && pair[1] === model.status,
+        );
+
+        if (!isValidChangeStatus) {
+            throw new HttpException(
+                HttpStatus.BadRequest,
+                `Invalid status change. Current purchase item '${purchaseExists.purchase_no}' cannot update status: ${purchaseExists.status} -> ${model.status}`,
+            );
+        }
+
+        switch (role) {
+            case 'manager':
+                if (purchaseExists.status === PurchaseStatusEnum.NEW) {
+                    purchaseExists.status = PurchaseStatusEnum.PROCESSING; // Chuyển đến staff
+                }
+                break;
+
+            case 'staff':
+                if (purchaseExists.status === PurchaseStatusEnum.PROCESSING) {
+                    purchaseExists.status = PurchaseStatusEnum.DELIVERING;
+                }
+                break;
+
+            case 'client':
+                if (purchaseExists.status === PurchaseStatusEnum.DELIVERING) {
+                    purchaseExists.status = PurchaseStatusEnum.DELIVERED;
+                }
+                break;
+
+            default:
+                throw new HttpException(HttpStatus.BadRequest, 'Invalid role or status');
+        }
+
+        await purchaseExists.save();
+
+        return { message: `Purchase status updated to ${purchaseExists.status}` };
+    }
 
 
 }

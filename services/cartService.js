@@ -1,7 +1,8 @@
+const { default: mongoose } = require("mongoose");
 const { HttpStatus, PREFIX_TITLE } = require("../consts");
 const HttpException = require("../exception");
 const { cartRepository, kitRepository, labRepository, comboRepository } = require("../repository");
-const { isEmptyObject, generateRandomNo } = require("../utils");
+const { isEmptyObject, generateRandomNo, itemsQuery, formatPaginationData } = require("../utils");
 
 const cartService = {
     create: async (model, userId) => {
@@ -51,8 +52,25 @@ const cartService = {
             throw new Error(`Product not found for type ${productType} with ID ${productId}`);
         }
         return product;
-    }
+    },
 
+
+    getCarts: async (model, userId) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
+        const { searchCondition, pageInfo } = model;
+        const { pageNum, pageSize } = pageInfo;
+        if (!userId) {
+            throw new HttpException(HttpStatus.BadRequest, 'User ID is required');
+        }
+
+
+        const { carts, totalCount } = await cartRepository.findCartsWithPagination(userId, searchCondition, pageNum, pageSize);
+
+        // Trả về dữ liệu với định dạng phân trang
+        return formatPaginationData(carts, pageNum, pageSize, totalCount);
+    }
 }
 
 module.exports = cartService

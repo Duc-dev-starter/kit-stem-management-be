@@ -11,6 +11,16 @@ const cartController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    getCarts: async (req, res, next) => {
+        try {
+            const model = req.body;
+            const result = await cartService.getCarts(model, req.user.id);
+            res.status(HttpStatus.Success).json(formatResponse(result));
+        } catch (error) {
+            next(error);
+        }
     }
 }
 

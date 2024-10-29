@@ -46,6 +46,11 @@ const labSchema = new mongoose.Schema({
         default: 5,
         required: true
     },
+    quantity: {
+        type: Number,
+        default: 50,
+        required: true
+    },
     price: { type: Number, required: true },
     discount: { type: Number, default: 0, min: 0, max: 100, required: true },
     created_at: { type: Date, default: Date.now() },

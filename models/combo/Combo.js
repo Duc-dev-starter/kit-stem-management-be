@@ -18,6 +18,11 @@ const comboSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    quantity: {
+        type: Number,
+        default: 50,
+        required: true
+    },
     price: { type: Number, required: true },
     discount: {
         type: Number,

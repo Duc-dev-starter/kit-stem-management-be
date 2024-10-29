@@ -23,7 +23,7 @@ const { Combo, validateCreateCombo, validateSearchCombo } = require('./combo')
 const { Review, validateCreateReview, validateUpdateReview } = require('./review')
 
 //Cart Schema
-const { Cart, CreateCartSchema } = require('./cart')
+const { Cart, validateCreateCart, validateSearchCart } = require('./cart')
 
 module.exports = {
     User,
@@ -61,5 +61,6 @@ module.exports = {
     validateCreateReview,
     validateUpdateReview,
     Cart,
-    CreateCartSchema
+    validateSearchCart,
+    validateCreateCart
 }

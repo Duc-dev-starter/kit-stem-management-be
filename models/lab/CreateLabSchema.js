@@ -23,6 +23,10 @@ const createLabSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    quantity: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         enum: Object.values(LabStatus),

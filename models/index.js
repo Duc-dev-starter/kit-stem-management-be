@@ -29,7 +29,7 @@ const { Cart, validateCreateCart, validateSearchCart } = require('./cart')
 const { Transaction } = require('./transaction')
 
 //Purchase Schema
-const { Purchase } = require('./purchase')
+const { Purchase, validateSearchPurchase } = require('./purchase')
 
 module.exports = {
     User,
@@ -70,5 +70,6 @@ module.exports = {
     validateSearchCart,
     validateCreateCart,
     Transaction,
-    Purchase
+    Purchase,
+    validateSearchPurchase
 }

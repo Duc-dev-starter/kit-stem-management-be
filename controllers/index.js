@@ -9,6 +9,7 @@ const clientController = require('./clientController');
 const comboController = require('./comboController');
 const reviewController = require('./reviewController');
 const cartController = require('./cartController');
+const purchaseController = require('./purchaseController');
 
 module.exports = {
     authController,
@@ -22,4 +23,5 @@ module.exports = {
     comboController,
     reviewController,
     cartController,
+    purchaseController,
 }

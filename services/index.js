@@ -9,6 +9,7 @@ const clientService = require('./clientService');
 const comboService = require('./comboService');
 const reviewService = require('./reviewService');
 const cartService = require('./cartService');
+const purchaseService = require('./purchaseService');
 
 module.exports = {
     authService,
@@ -22,5 +23,5 @@ module.exports = {
     comboService,
     reviewService,
     cartService,
-
+    purchaseService,
 }

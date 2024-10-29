@@ -1,5 +1,5 @@
 const COLLECTION_NAME = {
-    SETTING: 'Setting',
+    TRANSACTION: 'Transaction',
     USER: 'User',
     CATEGORY: 'Category',
     LAB: 'Lab',

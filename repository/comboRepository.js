@@ -101,6 +101,7 @@ const comboRepository = {
                         price: 1,
                         discount: 1,
                         reviews: 1,
+                        quantity: 1,
                         category_id: '$category_id',
                         category_name: '$categoryDetails.name',
                         user_id: '$user_id',

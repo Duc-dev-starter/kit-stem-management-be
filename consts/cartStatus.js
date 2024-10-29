@@ -5,4 +5,14 @@ const CartStatusEnum = {
     COMPLETED: 'completed',
 };
 
-module.exports = CartStatusEnum;
+const CART_STATUS_CHANGE_PAIRS = [
+    [CartStatusEnum.NEW, CartStatusEnum.WAITING_PAID],
+    [CartStatusEnum.CANCEL, CartStatusEnum.WAITING_PAID],
+    [CartStatusEnum.WAITING_PAID, CartStatusEnum.COMPLETED],
+    [CartStatusEnum.WAITING_PAID, CartStatusEnum.CANCEL],
+]
+
+module.exports = {
+    CartStatusEnum,
+    CART_STATUS_CHANGE_PAIRS,
+};

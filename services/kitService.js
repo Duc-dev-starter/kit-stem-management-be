@@ -102,6 +102,7 @@ const kitService = {
         if (!kit || kit.length === 0) {
             throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);
         }
+        console.log(kit)
         return kit[0];
     },
 

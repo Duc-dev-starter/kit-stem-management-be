@@ -54,8 +54,12 @@ const cartRepository = {
         return { carts, totalCount };
     },
 
-    countCarts: async (query) => {
-        return await Cart.find(query).countDocuments().exec();
+    deleteCart: async (id) => {
+        return await Cart.updateOne({ _id: id }, { is_deleted: true, updated_at: new Date() });
+    },
+
+    findOneCart: async (id) => {
+        return await Cart.findOne({ _id: id, is_deleted: false }).lean();
     }
 }
 

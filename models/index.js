@@ -25,6 +25,12 @@ const { Review, validateCreateReview, validateUpdateReview } = require('./review
 //Cart Schema
 const { Cart, validateCreateCart, validateSearchCart } = require('./cart')
 
+//Transaction Schema
+const { Transaction } = require('./transaction')
+
+//Purchase Schema
+const { Purchase } = require('./purchase')
+
 module.exports = {
     User,
     validateChangePassword,
@@ -62,5 +68,7 @@ module.exports = {
     validateUpdateReview,
     Cart,
     validateSearchCart,
-    validateCreateCart
+    validateCreateCart,
+    Transaction,
+    Purchase
 }

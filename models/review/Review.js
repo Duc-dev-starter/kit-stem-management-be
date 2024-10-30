@@ -16,6 +16,11 @@ const reviewSchema = new mongoose.Schema({
         enum: ['kit', 'lab', 'combo'],
         required: true
     },
+    purchase_id: { // Field mới để lưu purchase_id
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION_NAME.PURCHASE,
+        default: ''
+    },
     comment: {
         type: String,
         required: true

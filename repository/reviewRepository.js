@@ -10,12 +10,8 @@ const reviewRepository = {
         }
     },
 
-    countReviewsByUserAndProduct: async (userId, productId, productType) => {
-        return await Review.countDocuments({
-            user_id: userId,
-            product_id: productId,
-            product_type: productType,
-        });
+    countReviewsByUserAndPurchase: async (userId, purchaseId) => {
+        return await Review.countDocuments({ user_id: userId, purchase_id: purchaseId });
     },
 
     findReviewById: async (id) => {

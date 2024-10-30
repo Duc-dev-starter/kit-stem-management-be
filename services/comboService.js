@@ -38,6 +38,12 @@ const comboService = {
             }
         }
 
+        // Kiểm tra trùng lặp các items trong combo khác
+        const existingComboWithSameItems = await comboRepository.findComboByItems(items);
+        if (existingComboWithSameItems) {
+            throw new HttpException(HttpStatus.BadRequest, 'A combo with the same items already exists');
+        }
+
         // Xử lý giảm giá và logic khác nếu cần
         const finalDiscount = discount || 0;
 

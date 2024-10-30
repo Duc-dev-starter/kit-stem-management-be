@@ -2,6 +2,7 @@ const { HttpStatus, UserRoleEnum } = require("../consts");
 const HttpException = require("../exception");
 const { isEmptyObject, checkUserMatch } = require("../utils");
 const { kitRepository, labRepository, comboRepository, reviewRepository } = require("../repository");
+const { Purchase } = require("../models");
 
 const reviewService = {
     create: async (model, userId) => {
@@ -24,13 +25,26 @@ const reviewService = {
             throw new HttpException(HttpStatus.BadRequest, 'Product is not valid');
         }
 
-        const hasReviewed = await reviewService.hasUserReviewedProduct(model.product_id, model.product_type, userId);
-        if (hasReviewed) {
-            throw new HttpException(HttpStatus.Conflict, 'User has already reviewed this product');
+        // check only user purchase product must can review
+        const isPurchased = await Purchase
+            .findOne({
+                product_id: model.product_id,
+                user_id: userId,
+                product_type: model.product_type,
+            })
+            .limit(1)
+            .exec();
+        if (!isPurchased) {
+            throw new HttpException(HttpStatus.BadRequest, 'You must purchase this product before review!');
         }
-        // Xử lý tạo review tại đây (ví dụ lưu vào database)
-        // const review = await Review.create(model);
-        // return review;
+
+        const hasReviewed = await reviewService.hasUserReviewedPurchase(isPurchased._id, userId);
+        if (hasReviewed) {
+            throw new HttpException(HttpStatus.Conflict, 'User has already reviewed this purchase');
+        }
+
+        model.purchase_id = isPurchased._id;
+
         const newReview = await reviewRepository.createReview(model);
         if (!newReview) {
             throw new HttpException(HttpStatus.Accepted, 'Failed to create review');
@@ -54,10 +68,10 @@ const reviewService = {
         return product !== null; // Trả về `true` nếu tìm thấy sản phẩm hợp lệ
     },
 
-    hasUserReviewedProduct: async (productId, productType, userId) => {
-        // Kiểm tra trong repository xem user đã review chưa
-        const count = await reviewRepository.countReviewsByUserAndProduct(userId, productId, productType);
-        return count > 0; // Trả về `true` nếu đã có review trước đó
+    hasUserReviewedPurchase: async (purchaseId, userId) => {
+        // Kiểm tra trong repository xem user đã review cho `purchase_id` cụ thể chưa
+        const count = await reviewRepository.countReviewsByUserAndPurchase(userId, purchaseId);
+        return count > 0; // Trả về `true` nếu đã có review cho `purchase_id` này
     },
 
 

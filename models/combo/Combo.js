@@ -24,7 +24,7 @@ const comboSchema = new mongoose.Schema({
         required: true
     },
     price: { type: Number, required: true },
-    image: {
+    image_url: {
         type: String,
         required: true,
     },

@@ -11,6 +11,21 @@ const comboRepository = {
         }
     },
 
+    findComboByItems: async (items) => {
+        // Lấy danh sách itemId và itemType trong `items` của combo mới
+        const itemConditions = items.map(item => ({
+            "items.itemId": item.itemId,
+            "items.itemType": item.itemType
+        }));
+
+        // Tìm các combo mà tất cả `items` đều khớp với điều kiện
+        const combo = await Combo.findOne({
+            $and: itemConditions
+        });
+
+        return combo;
+    },
+
     isValidItem: async (item) => {
         const itemModel = item.itemType === 'kit' ? Kit : Lab;
         return await itemModel.exists({ _id: item.itemId });

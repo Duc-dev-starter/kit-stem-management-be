@@ -24,6 +24,10 @@ const comboSchema = new mongoose.Schema({
         required: true
     },
     price: { type: Number, required: true },
+    image: {
+        type: String,
+        required: true,
+    },
     discount: {
         type: Number,
         default: 0,

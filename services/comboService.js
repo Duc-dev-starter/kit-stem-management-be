@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 const { HttpStatus } = require("../consts");
 const HttpException = require("../exception");
 const { comboRepository, categoryRepository, kitRepository, labRepository } = require("../repository");
-const { isEmptyObject, formatPaginationData } = require("../utils");
+const { isEmptyObject, formatPaginationData, checkUserMatch } = require("../utils");
 
 const comboService = {
 
@@ -124,9 +124,132 @@ const comboService = {
         }));
 
         return formatPaginationData(combos, pageNum, pageSize, totalItems);
-    }
+    },
+
+    updateCombo: async (id, model, userId) => {
+        if (isEmptyObject(model)) {
+            throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
+        }
+
+        const errorResults = [];
+
+        // Kiểm tra combo có tồn tại không
+        const combo = await comboRepository.findComboById(id);
+        if (combo && combo.user_id) {
+            // Kiểm tra quyền người dùng
+            checkUserMatch(userId, combo.user_id.toString(), 'combo');
+        } else {
+            throw new HttpException(HttpStatus.BadRequest, 'Combo does not exist.');
+        }
+
+        // Kiểm tra danh mục hợp lệ
+        const category = await categoryRepository.findCategoryById(model.category_id);
+        if (!category) {
+            errorResults.push({
+                message: 'Category does not exist.',
+                field: 'category_id',
+            });
+        }
+
+        // Kiểm tra trùng lặp tên combo
+        if (combo.name.toLowerCase() !== model.name.toLowerCase()) {
+            const itemDuplicate = await comboRepository.findComboByName(model.name);
+            if (itemDuplicate) {
+                errorResults.push({
+                    message: `Combo with name '${model.name}' already exists!`,
+                    field: 'name'
+                });
+            }
+        }
+
+        // Kiểm tra giảm giá nằm trong khoảng hợp lệ (0-100)
+        if (model.discount < 0 || model.discount > 100) {
+            errorResults.push({
+                message: 'Please enter discount in range 0-100!',
+                field: 'discount',
+            });
+        }
+
+        // Kiểm tra danh sách `items`
+        if (model.items && model.items.length > 0) {
+            for (const item of model.items) {
+                if (!['kit', 'lab'].includes(item.itemType)) {
+                    errorResults.push({
+                        message: `Invalid itemType: ${item.itemType}`,
+                        field: 'items',
+                    });
+                } else {
+                    const isValid = await comboRepository.isValidItem(item);
+                    if (!isValid) {
+                        errorResults.push({
+                            message: `Invalid itemId for type ${item.itemType}: ${item.itemId}`,
+                            field: 'items',
+                        });
+                    }
+                }
+            }
 
 
+            // Kiểm tra các phần tử `items` trùng lặp với các combo khác
+            console.log(model.items)
+            const existingComboWithSameItems = await comboRepository.findComboByItems(model.items, id);
+            console.log(existingComboWithSameItems)
+            if (existingComboWithSameItems && existingComboWithSameItems._id.toString() !== id) {
+                errorResults.push({
+                    message: 'A combo with the same items already exists.',
+                    field: 'items',
+                });
+            }
+        } else {
+            errorResults.push({
+                message: 'Combo must contain at least one item.',
+                field: 'items',
+            });
+        }
+
+        console.log('test items')
+
+
+        // Kiểm tra các trường hợp lỗi
+        if (errorResults.length) {
+            throw new HttpException(HttpStatus.BadRequest, '', errorResults);
+        }
+
+        // Cập nhật combo mới qua repository
+        const updatedCombo = await comboRepository.updateCombo(id, {
+            ...model,
+            updated_at: new Date(),
+        });
+
+        if (!updatedCombo) {
+            throw new HttpException(HttpStatus.Accepted, 'Failed to update combo');
+        }
+
+        const result = await comboRepository.findComboById(id);
+        return result;
+    },
+
+
+    deleteCombo: async (id, userId) => {
+        const combo = await comboRepository.findComboById(id);
+
+        if (!combo || combo.is_deleted) {
+            throw new HttpException(HttpStatus.BadRequest, `Combo is not exists.`);
+        }
+
+        if (combo && combo.user_id) {
+            // check valid user
+            checkUserMatch(userId, combo.user_id.toString(), 'combo');
+        }
+
+        const updatedCombo = await comboRepository.deleteCombo(id);
+
+        if (!updatedCombo.acknowledged) {
+            throw new HttpException(HttpStatus.BadRequest, 'Delete combo failed!');
+        }
+
+        return true;
+    },
 
 }
 

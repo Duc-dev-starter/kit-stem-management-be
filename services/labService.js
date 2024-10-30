@@ -1,8 +1,10 @@
 const { HttpStatus } = require("../consts");
 const HttpException = require("../exception");
+const { Purchase, User } = require("../models");
 const { categoryRepository, labRepository, userRepository } = require("../repository");
 const { isEmptyObject, checkValidUrl, checkUserMatch, itemsQuery, formatPaginationData } = require("../utils");
 const mongoose = require('mongoose');
+const PDFDocument = require('pdfkit');
 
 const labService = {
     create: async (model, userId) => {
@@ -295,6 +297,33 @@ const labService = {
         }
 
         return true;
+    },
+
+    download: async (labId, userId) => {
+        const lab = await labRepository.findLabById(labId);
+        if (!lab || lab.is_deleted) {
+            throw new HttpException(HttpStatus.BadRequest, `Lab is not exists.`);
+        }
+
+        const purchase = await Purchase.findOne({ product_id: labId, user_id: userId, status: 'delivered' });
+        if (!purchase) {
+            throw new HttpException(HttpStatus.BadRequest, `You must purchase this lab before downloading`)
+        }
+
+        const user = await User.findOne({ _id: userId })
+
+        const doc = new PDFDocument();
+        doc.fontSize(24).text('Bài Lab: ' + lab.name, { underline: true });
+        doc.moveDown();
+        doc.text('Mã đơn hàng: ' + purchase.purchase_no); // Mã đơn hàng từ purchase
+        doc.moveDown();
+        doc.text('Tên khách hàng hàng: ' + user.name); // Mã đơn hàng từ purchase
+
+        doc.moveDown();
+        doc.fontSize(12).text('Mô tả: ' + lab.description);
+        doc.moveDown();
+
+        return doc; // Trả về document PDF để controller có thể sử dụng
     }
 }
 

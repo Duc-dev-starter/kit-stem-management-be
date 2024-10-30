@@ -85,6 +85,25 @@ const labController = {
         } catch (error) {
             next(error);
         }
+    },
+
+    download: async (req, res, next) => {
+        const labId = req.params.id;
+        const userId = req.user.id; // Lấy ID người dùng từ session hoặc token
+
+        try {
+            const doc = await labService.download(labId, userId);
+
+            // Thiết lập headers cho PDF
+            res.setHeader('Content-disposition', 'attachment; filename=lab.pdf');
+            res.setHeader('Content-type', 'application/pdf');
+
+            // Gửi PDF đến client
+            doc.pipe(res);
+            doc.end();
+        } catch (error) {
+            next(error);
+        }
     }
 }
 

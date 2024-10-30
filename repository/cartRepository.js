@@ -75,7 +75,7 @@ const cartRepository = {
             {
                 $limit: pageSize
             },
-            // Stage 8: Project để chọn product_name và product_image dựa trên product_type
+            // Stage 8: Project để chọn product_name và product_image dựa trên product_type, và tính toán price_paid
             {
                 $project: {
                     cart_no: 1,
@@ -107,6 +107,13 @@ const cartRepository = {
                             ],
                             default: 'No Image Available'
                         }
+                    },
+                    // Field mới: price_paid (giá sau khi áp dụng discount)
+                    price_paid: {
+                        $subtract: [
+                            "$price",
+                            { $multiply: ["$price", { $divide: ["$discount", 100] }] }
+                        ]
                     }
                 }
             }
@@ -125,6 +132,7 @@ const cartRepository = {
 
         return { carts, totalCount };
     },
+
 
 
     deleteCart: async (id) => {

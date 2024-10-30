@@ -32,6 +32,27 @@ const comboController = {
             next(error);
         }
     },
+
+    updateCombo: async (req, res, next) => {
+        try {
+            const comboId = req.params.id;
+            const model = req.body;
+            const combo = await comboService.updateCombo(comboId, model, req.user.id);
+            res.status(HttpStatus.Success).json(formatResponse(combo));
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    deleteCombo: async (req, res, next) => {
+        try {
+            const comboId = req.params.id;
+            await comboService.deleteCombo(comboId, req.user);
+            res.status(HttpStatus.Success).json(formatResponse(null));
+        } catch (error) {
+            next(error);
+        }
+    },
 }
 
 module.exports = comboController;

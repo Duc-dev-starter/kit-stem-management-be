@@ -28,6 +28,11 @@ const comboSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION_NAME.USER,
+        required: true
+    },
     discount: {
         type: Number,
         default: 0,

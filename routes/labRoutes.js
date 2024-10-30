@@ -50,4 +50,7 @@ router.delete('/:id',
     authMiddleWare([UserRoleEnum.MANAGER]),
     labController.deleteLab,
 );
+
+
+router.get('/download/:id', authMiddleWare([UserRoleEnum.CUSTOMER]), labController.download)
 module.exports = router;

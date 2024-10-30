@@ -21,4 +21,16 @@ router.get(
     comboController.getCombo,
 );
 
+router.put(
+    '/:id',
+    authMiddleWare([UserRoleEnum.MANAGER]),
+    comboController.updateCombo,
+);
+
+router.delete(
+    '/:id',
+    authMiddleWare([UserRoleEnum.MANAGER]),
+    comboController.deleteCombo,
+);
+
 module.exports = router

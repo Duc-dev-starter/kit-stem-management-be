@@ -159,7 +159,7 @@ const purchaseService = {
             },
             { $skip: (pageNum - 1) * pageSize },
             { $limit: pageSize }
-        ]);
+        ]).sort({ updated_at: -1 });
 
         console.log(purchases);
 

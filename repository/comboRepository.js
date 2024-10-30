@@ -11,20 +11,28 @@ const comboRepository = {
         }
     },
 
-    findComboByItems: async (items) => {
-        // Lấy danh sách itemId và itemType trong `items` của combo mới
+    findComboByItems: async (items, excludeId = null) => {
+        // Tạo điều kiện tìm kiếm cho từng `itemId` và `itemType` trong `items` của combo mới
         const itemConditions = items.map(item => ({
             "items.itemId": item.itemId,
             "items.itemType": item.itemType
         }));
 
-        // Tìm các combo mà tất cả `items` đều khớp với điều kiện
-        const combo = await Combo.findOne({
+        // Xây dựng điều kiện tìm kiếm chính
+        const query = {
             $and: itemConditions
-        });
+        };
 
+        // Nếu đang cập nhật, loại trừ combo hiện tại
+        if (excludeId) {
+            query._id = { $ne: new mongoose.Types.ObjectId(excludeId) };
+        }
+
+        // Tìm combo trùng lặp với các `items`
+        const combo = await Combo.findOne(query);
         return combo;
     },
+
 
     isValidItem: async (item) => {
         const itemModel = item.itemType === 'kit' ? Kit : Lab;
@@ -148,7 +156,8 @@ const comboRepository = {
                     },
                 },
                 { $limit: 1 },
-            ]).exec();
+            ])
+                .sort({ created_at: -1 }).exec();
 
             console.log(combo);
             return combo;
@@ -169,6 +178,17 @@ const comboRepository = {
             throw new Error(`Error counting combos: ${error.message}`);
         }
     },
+
+    updateCombo: async (id, updateData) => {
+        return await Combo.updateOne({ _id: id }, updateData);
+    },
+
+    deleteCombo: async (id) => {
+        return await Combo.updateOne(
+            { _id: id },
+            { is_deleted: true, updated_at: new Date() },
+        );
+    }
 }
 
 module.exports = comboRepository;

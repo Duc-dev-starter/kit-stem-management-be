@@ -7,11 +7,13 @@ const supportSchema = new mongoose.Schema({
         ref: COLLECTION_NAME.USER,
         required: true
     },
-    staff_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: COLLECTION_NAME.USER,
-        required: true
-    },
+    staff_ids: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: COLLECTION_NAME.USER,
+            required: true
+        }
+    ],
     lab_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: COLLECTION_NAME.LAB,
@@ -20,6 +22,19 @@ const supportSchema = new mongoose.Schema({
     content: {
         type: String,
         required: true
+    },
+    reply_content: {
+        type: String,
+        default: ''
+    },
+    reply_at: {
+        type: Date,
+        default: null
+    },
+    replied_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: COLLECTION_NAME.USER,
+        default: null
     },
     created_at: {
         type: Date,

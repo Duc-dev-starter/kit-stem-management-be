@@ -1,6 +1,6 @@
 const { HttpStatus } = require("../consts");
 const HttpException = require("../exception");
-const { Purchase, User } = require("../models");
+const { Purchase, User, Lab } = require("../models");
 const { categoryRepository, labRepository, userRepository } = require("../repository");
 const { isEmptyObject, checkValidUrl, checkUserMatch, itemsQuery, formatPaginationData } = require("../utils");
 const mongoose = require('mongoose');
@@ -324,7 +324,9 @@ const labService = {
         doc.moveDown();
 
         return doc; // Trả về document PDF để controller có thể sử dụng
-    }
+    },
+
+
 }
 
 module.exports = labService;

@@ -31,6 +31,9 @@ const { Transaction } = require('./transaction')
 //Purchase Schema
 const { Purchase, validateSearchPurchase } = require('./purchase')
 
+//Support Schema
+const { Support } = require('./support')
+
 module.exports = {
     User,
     validateChangePassword,
@@ -71,5 +74,6 @@ module.exports = {
     validateCreateCart,
     Transaction,
     Purchase,
-    validateSearchPurchase
+    validateSearchPurchase,
+    Support
 }

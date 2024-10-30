@@ -56,6 +56,10 @@ const labSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now() },
     updated_at: { type: Date, default: Date.now() },
     is_deleted: { type: Boolean, default: false },
+    supporterDetails: [{
+        customer_id: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTION_NAME.USER },
+        used_support_count: { type: Number, default: 0 } // Số lần hỗ trợ đã sử dụng
+    }],
     support_histories: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: COLLECTION_NAME.SUPPORT,

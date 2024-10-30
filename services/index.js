@@ -10,6 +10,8 @@ const comboService = require('./comboService');
 const reviewService = require('./reviewService');
 const cartService = require('./cartService');
 const purchaseService = require('./purchaseService');
+const supportService = require('./supportService');
+const transactionService = require('./transactionService');
 
 module.exports = {
     authService,
@@ -24,4 +26,7 @@ module.exports = {
     reviewService,
     cartService,
     purchaseService,
+    supportService,
+    transactionService,
+
 }

@@ -104,7 +104,9 @@ const labController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+
+
 }
 
 module.exports = labController

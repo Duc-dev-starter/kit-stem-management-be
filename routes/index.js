@@ -10,6 +10,8 @@ const comboRoutes = require('./comboRoutes');
 const reviewRoutes = require('./reviewRoutes')
 const cartRoutes = require('./cartRoutes')
 const purchaseRoutes = require('./purchaseRoutes')
+const supportRoutes = require('./supportRoutes')
+const transactionRoutes = require('./transactionRoutes')
 
 module.exports = {
     authRoutes,
@@ -24,4 +26,7 @@ module.exports = {
     reviewRoutes,
     cartRoutes,
     purchaseRoutes,
+    supportRoutes,
+    transactionRoutes,
+
 };

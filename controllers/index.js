@@ -10,6 +10,8 @@ const comboController = require('./comboController');
 const reviewController = require('./reviewController');
 const cartController = require('./cartController');
 const purchaseController = require('./purchaseController');
+const supportController = require('./supportController');
+const transactionController = require('./transactionController');
 
 module.exports = {
     authController,
@@ -24,4 +26,6 @@ module.exports = {
     reviewController,
     cartController,
     purchaseController,
+    supportController,
+    transactionController,
 }

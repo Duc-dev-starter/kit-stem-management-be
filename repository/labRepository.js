@@ -155,6 +155,27 @@ const labRepository = {
                                     },
                                 },
                             },
+                            // Add a lookup to get user names for reviews
+                            {
+                                $lookup: {
+                                    from: 'users',
+                                    localField: 'user_id',
+                                    foreignField: '_id',
+                                    as: 'reviewer',
+                                },
+                            },
+                            {
+                                $unwind: { path: '$reviewer', preserveNullAndEmptyArrays: true },
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    comment: 1,
+                                    rating: 1,
+                                    created_at: 1,
+                                    user_name: '$reviewer.name', // Get the user's name from the reviewer
+                                },
+                            },
                         ],
                         as: 'reviews',
                     },
@@ -179,7 +200,7 @@ const labRepository = {
                             _id: 1,
                             name: 1,
                         },
-                        reviews: 1, // Thêm mảng reviews vào kết quả
+                        reviews: 1, // Include the enriched reviews
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,
@@ -192,6 +213,7 @@ const labRepository = {
             console.log(error);
         }
     },
+
 
 
     findLabById: async (id) => {

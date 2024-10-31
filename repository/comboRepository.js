@@ -111,6 +111,27 @@ const comboRepository = {
                                     },
                                 },
                             },
+                            // Lookup to get user names for reviews
+                            {
+                                $lookup: {
+                                    from: 'users',
+                                    localField: 'user_id',
+                                    foreignField: '_id',
+                                    as: 'reviewer',
+                                },
+                            },
+                            {
+                                $unwind: { path: '$reviewer', preserveNullAndEmptyArrays: true },
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    comment: 1,
+                                    rating: 1,
+                                    created_at: 1,
+                                    user_name: '$reviewer.name', // Get the user's name from the reviewer
+                                },
+                            },
                         ],
                         as: 'reviews',
                     },
@@ -138,17 +159,17 @@ const comboRepository = {
                         description: 1,
                         price: 1,
                         discount: 1,
-                        reviews: 1,
+                        reviews: 1, // Include the enriched reviews
                         quantity: 1,
                         category_id: '$category_id',
                         category_name: '$categoryDetails.name',
                         user_id: '$user_id',
                         user_name: '$userDetails.name',
                         kits: {
-                            $arrayElemAt: ['$kitDetails', 0]  // Lấy phần tử đầu tiên trong mảng kits
+                            $arrayElemAt: ['$kitDetails', 0]  // Get the first element from kits array
                         },
                         labs: {
-                            $arrayElemAt: ['$labDetails', 0]  // Lấy phần tử đầu tiên trong mảng labs
+                            $arrayElemAt: ['$labDetails', 0]  // Get the first element from labs array
                         },
                         created_at: 1,
                         updated_at: 1,
@@ -167,6 +188,7 @@ const comboRepository = {
             throw new Error(`Error finding combos with pagination: ${error.message}`);
         }
     },
+
 
 
 

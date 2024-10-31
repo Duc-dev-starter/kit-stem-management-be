@@ -6,6 +6,7 @@ const purchaseController = {
     getPurchases: async (req, res, next) => {
         try {
             const model = req.body;
+            console.log(model);
             const result = await purchaseService.getPurchases(
                 model,
                 req.user,

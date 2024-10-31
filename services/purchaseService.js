@@ -122,6 +122,21 @@ const purchaseService = {
                     preserveNullAndEmptyArrays: true
                 }
             },
+            // Thực hiện $lookup để lấy thông tin staff_name từ collection users
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'staff_id', // staff_id trong purchases
+                    foreignField: '_id', // _id trong users
+                    as: 'staff_info'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$staff_info',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
             {
                 $project: {
                     purchase_no: 1,
@@ -133,9 +148,11 @@ const purchaseService = {
                     product_id: 1,
                     product_type: 1,
                     user_id: 1,
+                    staff_id: 1,
                     created_at: 1,
                     updated_at: 1,
                     user_name: '$user_info.name',
+                    staff_name: '$staff_info.name', // Lấy tên của staff từ staff_info
                     product_name: {
                         $switch: {
                             branches: [
@@ -160,6 +177,7 @@ const purchaseService = {
             { $skip: (pageNum - 1) * pageSize },
             { $limit: pageSize }
         ]).sort({ updated_at: -1 });
+
 
         console.log(purchases);
 

@@ -31,7 +31,6 @@ const comboSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: COLLECTION_NAME.USER,
-        required: true
     },
     discount: {
         type: Number,

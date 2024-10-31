@@ -40,6 +40,7 @@ const comboSchema = new mongoose.Schema({
 });
 
 const validateCreateCombo = (data) => {
+    console.log(data)
     const instance = new mongoose.Document(data, comboSchema);
     return instance.validate();
 };

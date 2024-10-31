@@ -15,11 +15,10 @@ const supportController = {
     },
 
     getLabWithSupportHistoryController: async (req, res, next) => {
-        const { labId } = req.params;
-        const { staffId, customerId } = req.query;
+        const { staffId, customerId } = req.body;
 
         try {
-            const labWithSupportHistory = await supportService.getLabWithSupportHistory(labId, staffId, customerId);
+            const labWithSupportHistory = await supportService.getLabWithSupportHistory(staffId, customerId);
             res.status(HttpStatus.Success).json(formatResponse(labWithSupportHistory));
         } catch (error) {
             next(error);

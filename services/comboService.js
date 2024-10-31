@@ -11,7 +11,7 @@ const comboService = {
             throw new HttpException(HttpStatus.BadRequest, 'Model data is empty');
         }
 
-        const { name, items, price, discount, description, category_id } = model;
+        const { name, items, price, discount, description, category_id, image_url } = model;
 
         if (!items || items.length === 0) {
             throw new HttpException(HttpStatus.BadRequest, 'Combo must contain at least one item');
@@ -52,6 +52,7 @@ const comboService = {
             name,
             items,
             price,
+            image_url,
             discount: finalDiscount,
             description,
             category_id

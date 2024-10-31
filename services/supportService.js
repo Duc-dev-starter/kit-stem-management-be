@@ -7,6 +7,14 @@ const supportService = {
         const lab = await Lab.findById(labId);
         if (!lab) throw new HttpException(HttpStatus.BadRequest, 'Lab not found');
 
+        // Find the support usage of this customer
+        const supportInfo = lab.supporterDetails.find(s => s.customer_id.toString() === customerId.toString());
+
+        // Check if the customer has reached the max support count
+        if (supportInfo && supportInfo.used_support_count >= lab.max_support_count) {
+            throw new HttpException(HttpStatus.Forbidden, 'Support limit reached');
+        }
+
         // Tạo yêu cầu hỗ trợ mới và lưu vào collection Support
         const newSupport = await Support.create({
             customer_id: customerId,
@@ -24,9 +32,9 @@ const supportService = {
     },
 
 
-    getLabWithSupportHistory: async (labId, staffId = null, customerId = null) => {
+    getLabWithSupportHistory: async (staffId = null, customerId = null) => {
         // Tìm lab và populate support_histories
-        const lab = await Lab.findById(labId).populate({
+        const lab = await Lab.find({}).populate({
             path: 'support_histories',
             match: {
                 ...(staffId && { staff_id: staffId }), // Lọc theo staff_id nếu có
@@ -42,30 +50,38 @@ const supportService = {
 
     replyToSupport: async (supportId, staffId, replyContent) => {
         const support = await Support.findById(supportId);
-        if (!support) {
-            throw new HttpException(HttpStatus.BadRequest, 'Support request not found');
-        }
+        if (!support) throw new HttpException(HttpStatus.BadRequest, 'Support request not found');
 
-        // Kiểm tra xem nhân viên có phải là một trong những nhân viên hỗ trợ không
+        const lab = await Lab.findById(support.lab_id);
+
+        // Ensure staff is authorized to reply
         if (!support.staff_ids.includes(staffId)) {
             throw new HttpException(HttpStatus.BadRequest, 'Staff not authorized to reply');
         }
 
-        // Thêm nội dung trả lời
-        support.replyContent = replyContent;
-        support.replied = true; // Đánh dấu đã được trả lời
+        // Get or initialize customer's support usage details
+        let supportInfo = lab.supporterDetails.find(s => s.customer_id.toString() === support.customer_id.toString());
 
-        // Cập nhật số lần hỗ trợ đã sử dụng cho khách hàng
-        const lab = await Lab.findById(support.lab_id);
-        const supportInfo = lab.supporterDetails.find(s => s.customer_id.toString() === support.customer_id.toString());
+        // Check if customer has reached max support count
+        if (supportInfo && supportInfo.used_support_count >= lab.max_support_count) {
+            throw new HttpException(HttpStatus.Forbidden, 'Support limit reached');
+        }
+
+        // Add reply content to the support request
+        support.reply_content = replyContent;
+        support.replied = true;
+        support.reply_at = Date.now();
+        support.replied_by = staffId;
+
+        // Update or add customer support usage in lab document
         if (supportInfo) {
             supportInfo.used_support_count += 1;
         } else {
             lab.supporterDetails.push({ customer_id: support.customer_id, used_support_count: 1 });
         }
 
-        await support.save(); // Lưu cập nhật cho yêu cầu hỗ trợ
-        await lab.save(); // Lưu cập nhật cho lab
+        await support.save(); // Save the support reply
+        await lab.save(); // Save updates to the lab
 
         return support;
     }

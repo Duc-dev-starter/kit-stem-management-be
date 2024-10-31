@@ -68,7 +68,7 @@ const comboService = {
     getCombo: async (id) => {
         const combo = await comboRepository.findComboWithUserAndCategory(id);
         if (!combo || combo.length === 0) {
-            throw new HttpException(HttpStatus.BadRequest, `Combo is not exists.`);
+            throw new HttpException(HttpStatus.NotFound, `Combo is not exists.`);
         }
         return combo[0];
     },

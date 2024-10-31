@@ -202,7 +202,7 @@ const labService = {
     getLab: async (id) => {
         const lab = await labRepository.findLabWithUserAndCategoryAndSupporter(id);
         if (!lab || lab.length === 0) {
-            throw new HttpException(HttpStatus.BadRequest, `Lab is not exists.`);
+            throw new HttpException(HttpStatus.NotFound, `Lab is not exists.`);
         }
         return lab[0];
     },

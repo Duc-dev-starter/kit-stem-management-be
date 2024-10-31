@@ -100,7 +100,7 @@ const kitService = {
     getKit: async (id) => {
         const kit = await kitRepository.findKitWithUserAndCategoryAndLabs(id);
         if (!kit || kit.length === 0) {
-            throw new HttpException(HttpStatus.BadRequest, `Kit is not exists.`);
+            throw new HttpException(HttpStatus.NotFound, `Kit is not exists.`);
         }
         console.log(kit)
         return kit[0];

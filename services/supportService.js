@@ -40,7 +40,7 @@ const supportService = {
                 ...(staffId && { staff_id: staffId }), // Lọc theo staff_id nếu có
                 ...(customerId && { customer_id: customerId }) // Lọc theo customer_id nếu có
             }
-        });
+        }).sort({ created_at: -1 });
 
         if (!lab) throw new HttpException(HttpStatus.BadRequest, 'Lab not found');
 
@@ -53,7 +53,7 @@ const supportService = {
         if (!support) throw new HttpException(HttpStatus.BadRequest, 'Support request not found');
 
         const lab = await Lab.findById(support.lab_id);
-
+        console.log(staffId)
         // Ensure staff is authorized to reply
         if (!support.staff_ids.includes(staffId)) {
             throw new HttpException(HttpStatus.BadRequest, 'Staff not authorized to reply');

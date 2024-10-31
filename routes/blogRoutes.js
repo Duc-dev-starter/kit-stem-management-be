@@ -15,7 +15,7 @@ router.post(
 
 // POST domain:/api/blog/search -> Get all items
 router.post('/search',
-    authMiddleWare([UserRoleEnum.ADMIN]),
+    authMiddleWare([UserRoleEnum.ADMIN, UserRoleEnum.MANAGER]),
     validationMiddleware(validateSearchBlog),
     blogController.getBlogs,
 );

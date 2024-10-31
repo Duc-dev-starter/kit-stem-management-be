@@ -155,7 +155,6 @@ const labRepository = {
                                     },
                                 },
                             },
-                            // Add a lookup to get user names for reviews
                             {
                                 $lookup: {
                                     from: 'users',
@@ -173,11 +172,21 @@ const labRepository = {
                                     comment: 1,
                                     rating: 1,
                                     created_at: 1,
-                                    user_name: '$reviewer.name', // Get the user's name from the reviewer
+                                    user_name: '$reviewer.name',
                                 },
                             },
                         ],
                         as: 'reviews',
+                    },
+                },
+                {
+                    $addFields: {
+                        price_paid: {
+                            $multiply: [
+                                '$price',
+                                { $subtract: [1, { $divide: ['$discount', 100] }] },
+                            ],
+                        },
                     },
                 },
                 {
@@ -195,12 +204,13 @@ const labRepository = {
                         lab_url: 1,
                         price: 1,
                         discount: 1,
+                        price_paid: 1, // Newly added field
                         max_support_count: 1,
                         supporterDetails: {
                             _id: 1,
                             name: 1,
                         },
-                        reviews: 1, // Include the enriched reviews
+                        reviews: 1,
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,

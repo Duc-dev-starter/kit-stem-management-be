@@ -161,7 +161,6 @@ const kitRepository = {
                                     },
                                 },
                             },
-                            // Add another lookup to get user information for each review
                             {
                                 $lookup: {
                                     from: 'users',
@@ -170,20 +169,28 @@ const kitRepository = {
                                     as: 'review_user',
                                 },
                             },
-                            // Unwind the review_user array to access user details
                             { $unwind: { path: '$review_user', preserveNullAndEmptyArrays: true } },
-                            // Project the desired fields including user_name
                             {
                                 $project: {
                                     _id: 1,
                                     comment: 1,
                                     rating: 1,
                                     created_at: 1,
-                                    user_name: '$review_user.name', // Include user_name from the review_user
+                                    user_name: '$review_user.name',
                                 },
                             },
                         ],
                         as: 'reviews',
+                    },
+                },
+                {
+                    $addFields: {
+                        price_paid: {
+                            $multiply: [
+                                '$price',
+                                { $subtract: [1, { $divide: ['$discount', 100] }] },
+                            ],
+                        },
                     },
                 },
                 {
@@ -200,9 +207,10 @@ const kitRepository = {
                         image_url: 1,
                         price: 1,
                         discount: 1,
+                        price_paid: 1, // Newly added field
                         lab_count: { $ifNull: [{ $arrayElemAt: ['$labs.labCount', 0] }, 0] },
                         labs: { $ifNull: [{ $arrayElemAt: ['$labs.labs', 0] }, []] },
-                        reviews: 1, // Now includes user_name in each review
+                        reviews: 1,
                         created_at: 1,
                         updated_at: 1,
                         is_deleted: 1,
@@ -210,12 +218,12 @@ const kitRepository = {
                 },
                 { $limit: 1 },
             ]).exec();
-
         } catch (error) {
             console.log(error);
             return;
         }
     },
+
 
 
 

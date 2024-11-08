@@ -13,7 +13,7 @@ const authController = {
             next(error);
         }
     },
-
+//a
     getCurrentLoginUser: async (req, res, next) => {
         try {
             const user = await authService.getCurrentLoginUser(req.user.id);
